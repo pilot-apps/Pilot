@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pilot-Hjælp">
+<title>Pilot-Hjælp</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+:root{
+  --bg:#f5f3ef;--surface:#fff;--dark:#1a1a2e;--accent:#e8a020;
+  --red:#c0392b;--text:#1a1a2e;--muted:#6b7280;--border:#e2ddd6;
+  --tag:#eef2ff;--tag-t:#3730a3;--radius:10px;
+  --sat:env(safe-area-inset-top);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overscroll-behavior:none}
+
+/* TOPBAR */
+.topbar{background:var(--dark);color:#fff;padding:13px 16px;padding-top:calc(13px + env(safe-area-inset-top));display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.logo{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:16px;color:var(--accent);letter-spacing:-0.3px;white-space:nowrap}
+.topbar-title{font-size:13px;font-weight:500;color:rgba(255,255,255,.7);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back{background:rgba(255,255,255,.12);border:none;color:#fff;padding:6px 11px;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:12px;cursor:pointer;display:none;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0}
+.back.on{display:flex}.back:active{opacity:.7}
+
+/* SEARCH */
+.search-wrap{padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:53px;z-index:90}
+.si{position:relative}
+.si input{width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:8px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;background:#fff;outline:none;-webkit-appearance:none;transition:border-color .15s}
+.si input:focus{border-color:var(--accent)}
+.si::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
+
+/* BREADCRUMB */
+.bc{padding:6px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);display:flex;gap:4px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border);min-height:30px;background:var(--bg)}
+.bc-item{cursor:pointer;text-decoration:underline;text-underline-offset:2px}.bc-item:active{opacity:.6}
+
+/* MAIN */
+.main{padding:10px 14px 100px}
+
+/* SECTION LABEL */
+.sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);padding:10px 0 6px}
+
+/* CARDS */
+.card-grid{display:flex;flex-direction:column;gap:7px}
+.card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:13px 14px;cursor:pointer;display:flex;align-items:center;gap:11px;transition:border-color .15s;-webkit-user-select:none;user-select:none}
+.card:active{border-color:var(--accent);background:#fffbf5}
+.card.arr::after{content:'›';color:var(--muted);font-size:20px;margin-left:auto;font-weight:300}
+.ci{font-size:18px;width:36px;height:36px;background:var(--tag);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cb{flex:1;min-width:0}
+.ct{font-weight:600;font-size:14px;line-height:1.3}
+.cs{font-size:12px;color:var(--muted);margin-top:2px}
+.badge{background:var(--dark);color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;flex-shrink:0;white-space:nowrap}
+
+/* CONTENT CARD */
+.cc{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:8px}
+.ch{background:var(--dark);color:#fff;padding:12px 14px;display:flex;align-items:flex-start;gap:9px}
+.ch-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.ch-title{font-weight:600;font-size:14px}
+.ch-sub{font-size:11px;opacity:.6;margin-top:2px}
+.cb2{padding:14px}
+.shop-entry{padding:10px 0;border-bottom:1px solid var(--border)}
+.shop-entry:last-child{border-bottom:none}
+.sn{font-weight:600;font-size:14px;margin-bottom:3px}
+.sa{font-size:12px;color:var(--muted);margin-bottom:6px}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:3px 7px;border-radius:5px}
+.tag-h{background:var(--tag);color:var(--tag-t)}
+.tag-l{background:#fef3c7;color:#92400e}
+.tag-a{background:#dcfce7;color:#166534}
+.zip-lbl{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--red);margin-bottom:2px}
+.route-time{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--dark);color:var(--accent);padding:2px 7px;border-radius:4px;font-weight:700}
+.rtype{display:inline-block;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:600;margin-left:4px}
+.fast{background:#dcfce7;color:#166534}
+.ringer{background:#fef3c7;color:#92400e}
+.speciel{background:#ede9fe;color:#5b21b6}
+.lc{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:13px 14px;display:flex;align-items:center;gap:11px;margin-bottom:7px;text-decoration:none;color:inherit;-webkit-user-select:none;user-select:none}
+.lc:active{border-color:var(--accent)}
+.lc-icon{font-size:19px;width:36px;height:36px;background:var(--tag);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lc-cred{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);margin-top:2px}
+.step-num{width:26px;height:26px;background:var(--dark);color:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0}
+.port-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;background:#f1f5f9;color:#475569;padding:2px 6px;border-radius:4px;margin-left:5px}
+.no-results{text-align:center;padding:40px 16px;color:var(--muted);font-size:14px}
+.sr-sec{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);padding:10px 0 6px;border-top:1px solid var(--border);margin-top:10px}
+.sr-sec:first-child{border-top:none;margin-top:0}
+
+/* INSTALL BANNER */
+.install-banner{position:fixed;bottom:0;left:0;right:0;background:var(--dark);padding:14px 16px;padding-bottom:calc(14px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;z-index:200;border-top:2px solid var(--accent);box-shadow:0 -4px 20px rgba(0,0,0,.3)}
+.install-banner.hidden{display:none}
+.install-logo{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;color:var(--accent)}
+.install-text{flex:1;color:#fff;font-size:13px;line-height:1.3}
+.install-text small{color:rgba(255,255,255,.5);font-size:11px;display:block;margin-top:1px}
+.install-btn{background:var(--accent);color:var(--dark);border:none;padding:8px 14px;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.install-btn:active{opacity:.8}
+.install-close{background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;padding:0 4px;flex-shrink:0;line-height:1}
+.install-close:active{color:#fff}
+
+/* ADMIN PANEL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+.modal-bg.hidden{display:none}
+.modal{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:20px 16px 40px}
+.modal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-title{font-weight:700;font-size:16px}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)}
+.form-group{margin-bottom:14px}
+.form-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:5px}
+.form-input,.form-select,.form-textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;outline:none;-webkit-appearance:none;background:#fff}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+.form-textarea{min-height:80px;resize:vertical;line-height:1.4}
+.btn-primary{background:var(--dark);color:var(--accent);border:none;padding:12px 20px;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;cursor:pointer;width:100%;margin-top:6px}
+.btn-primary:active{opacity:.8}
+.btn-danger{background:#fee2e2;color:#dc2626;border:none;padding:8px 14px;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;cursor:pointer}
+.custom-section-list{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.custom-item{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;display:flex;align-items:center;gap:10px}
+.custom-item-body{flex:1;min-width:0}
+.custom-item-name{font-weight:600;font-size:14px}
+.custom-item-sub{font-size:12px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ADMIN FAB */
+.fab{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));right:16px;background:var(--dark);color:var(--accent);border:none;width:46px;height:46px;border-radius:50%;font-size:20px;cursor:pointer;z-index:150;box-shadow:0 3px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
+.fab:active{opacity:.8}
+.fab.with-banner{bottom:calc(74px + env(safe-area-inset-bottom))}
+
+/* ADMIN TABS */
+.atab{background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:6px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);}
+.atab.active{background:var(--dark);color:var(--accent);border-color:var(--dark);}
+.atab:active{opacity:.7}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back" id="backBtn" onclick="goBack()">← Tilbage</button>
+  <div class="logo">Pilot-Hjælp</div>
+  <div class="topbar-title" id="topTitle"></div>
+</div>
+
+<div class="search-wrap">
+  <div class="si"><input id="searchInput" type="search" placeholder="Søg butik, rute, tid..." oninput="handleSearch(this.value)" autocomplete="off"></div>
+</div>
+
+<div class="bc" id="bc"></div>
+<div class="main" id="main"></div>
+
+<!-- Install Banner -->
+<div class="install-banner hidden" id="installBanner">
+  <div class="install-logo">📲</div>
+  <div class="install-text">
+    Installer Pilot-Hjælp
+    <small>Tilføj til startskærm for hurtig adgang</small>
+  </div>
+  <button class="install-btn" id="installBtn" onclick="doInstall()">Installer</button>
+  <button class="install-close" onclick="dismissInstall()">×</button>
+</div>
+
+<!-- Admin Modal -->
+<div class="modal-bg hidden" id="modalBg" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-h">
+      <div class="modal-title" id="modal-title-text">🔐 Admin Login</div>
+      <button class="modal-close" onclick="closeModal(null)">×</button>
+    </div>
+
+    <!-- LOGIN VIEW -->
+    <div id="loginView">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Indtast admin-kode for at redigere menuer.</p>
+      <div class="form-group">
+        <label class="form-label">Kode</label>
+        <input class="form-input" id="admin-pw" type="password" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div id="login-err" style="color:#dc2626;font-size:12px;margin-bottom:10px;min-height:16px"></div>
+      <button class="btn-primary" onclick="doLogin()">Log ind</button>
+      <p style="font-size:11px;color:var(--muted);margin-top:16px;text-align:center">Chauffører behøver ikke login — al indhold er frit tilgængeligt.</p>
+    </div>
+
+    <!-- ADMIN PANEL VIEW -->
+    <div id="adminPanelView" class="hidden">
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap" id="adminTabs"></div>
+      <div id="adminBody"></div>
+      <div style="border-top:1px solid var(--border);margin-top:20px;padding-top:14px">
+        <button class="btn-danger" onclick="doLogout()" style="width:100%;padding:10px">🔓 Log ud</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB Admin Button -->
+<button class="fab" id="fab" onclick="openModal()" title="Admin / Tilpas menu">⚙️</button>
+
+<script>
+const ADMIN_PASSWORD = 'Pilot@2026';
+let isAdmin = false;
+
+// ── BASE DATA (fallback) ──────────────────────────────────────────────
+const D_BASE = {"pakkeshop":{"2600 Glostrup":[{"name":"Spar Glostrup","hverdag":"10:00–12:00","lørdag":null,"afhentning":null},{"name":"Min Købmand Ejby","hverdag":"08:00–10:00","lørdag":null,"afhentning":"08:00-10:00"},{"name":"Elite Købmand Glostrup","hverdag":"09:00–11:00","lørdag":null,"afhentning":"13:00-15:00"},{"name":"Desi Bazar","hverdag":"11:00–13:00","lørdag":null,"afhentning":"11:00-13:00"},{"name":"Sukkerland","hverdag":"13:00–15:00","lørdag":null,"afhentning":null},{"name":"Tips Kiosken Glostrup","hverdag":"09:00–11:00","lørdag":null,"afhentning":null}],"2605 Brøndby":[{"name":"Kvickly Brøndby","hverdag":"09:00–11:00","lørdag":"11:00–13:00","afhentning":null},{"name":"Brøndby Minimarked","hverdag":"10:00–12:00","lørdag":"09:00–11:00","afhentning":null},{"name":"Shell Brøndby Roskildevej","hverdag":null,"lørdag":null,"afhentning":null},{"name":"Kirkebjerg Kiosken","hverdag":"08:00–10:00","lørdag":"09:00–11:00","afhentning":null},{"name":"SuperBrugsen Brøndby","hverdag":"09:00–11:00","lørdag":"09:00–11:00","afhentning":"09:00-11:00"}],"2620 Albertslund":[{"name":"DSB 7-eleven Albertslund Station","hverdag":"10:00–12:00","lørdag":"10:00–12:00","afhentning":"10:00-12:00"},{"name":"Kvickly Albertslund","hverdag":"08:00–10:00","lørdag":null,"afhentning":"08:00-10:00"},{"name":"Elite Købmand Albertslund","hverdag":"12:00–14:00","lørdag":"08:00–10:00","afhentning":null},{"name":"7-Eleven Albertslund","hverdag":"10:00–12:00","lørdag":"08:00–10:00","afhentning":null},{"name":"Galgebakkens Købmand","hverdag":"08:00–10:00","lørdag":"08:00–10:00","afhentning":null},{"name":"SGJ","hverdag":null,"lørdag":null,"afhentning":"11:00-13:00"}],"2625 Vallensbæk":[{"name":"2625 OK Plus Vallensbæk","hverdag":"08:00–10:00","lørdag":"08:00–10:00","afhentning":null}],"2630 Taastrup":[{"name":"Silvan City 2","hverdag":null,"lørdag":"10:00–12:00","afhentning":"17:00-18:30"},{"name":"Q8 Taastrup","hverdag":"08:00–10:00","lørdag":"08:00–10:00","afhentning":null},{"name":"Kvickly Taastrup Torv","hverdag":"10:00–12:00","lørdag":"10:00–12:00","afhentning":"14:00-16:00"},{"name":"DSB 7-Eleven Høje Taastrup Station","hverdag":"09:00–11:00","lørdag":"10:00–12:00","afhentning":null},{"name":"Telegiganten Tåstrup","hverdag":"10:00–12:00","lørdag":"10:00–12:00","afhentning":null},{"name":"GLS PakkeShop","hverdag":"07:30–09:30","lørdag":"08:00–10:00","afhentning":null}],"2635 Ishøj":[{"name":"Q8 Ishøj Stationsvej","hverdag":"07:00–09:00","lørdag":"08:00–10:00","afhentning":null},{"name":"DSB 7-Eleven Ishøj Station","hverdag":"08:00–10:00","lørdag":"08:00–10:00","afhentning":null},{"name":"Min Købmand Ishøj","hverdag":"08:00–10:00","lørdag":"08:00–10:00","afhentning":"14:00-16:00"}],"2660 Brøndby Strand":[{"name":"Center Kiosken","hverdag":"11:00–13:00","lørdag":"12:00–14:00","afhentning":null},{"name":"Elite Supermarked, Pizza & frisør","hverdag":"11:00–13:00","lørdag":"09:00–11:00","afhentning":null},{"name":"OK Plus Brøndby Strand","hverdag":"10:00–12:00","lørdag":"08:00–10:00","afhentning":"10:00-12:00"}],"2670 Greve":[{"name":"GLS PakkeShop Waves","hverdag":"08:00–10:00","lørdag":"08:00–10:00","afhentning":null},{"name":"Silvan Greve","hverdag":"09:00–11:00","lørdag":"11:00–13:00","afhentning":null},{"name":"Kioskland","hverdag":"08:00–10:00","lørdag":"08:00–10:00","afhentning":null},{"name":"Q8 Greve","hverdag":"09:00–11:00","lørdag":"08:00–10:00","afhentning":null}],"2680 Solrød Strand":[{"name":"SuperBrugsen Solrød Strand","hverdag":"10:00–12:00","lørdag":"09:00–11:00","afhentning":null},{"name":"OK Plus Solrød Strand","hverdag":"07:00–09:00","lørdag":"09:00–11:00","afhentning":null},{"name":"7-Eleven Solrød Strand","hverdag":"08:00–10:00","lørdag":"09:00–11:00","afhentning":null}],"2690 Karlslunde":[{"name":"SuperBrugsen Karlslunde","hverdag":"10:00–12:00","lørdag":"08:00–10:00","afhentning":null},{"name":"Meny Karlslunde","hverdag":"07:00–09:00","lørdag":"08:00–10:00","afhentning":null}],"2665 Vallensbæk strand":[{"name":"SuperBrugsen Vallensbæk","hverdag":"08:00–10:00","lørdag":"09:00–11:00","afhentning":null}]},"afhentning":{"2450":[{"type":"Fast","zip":"2450","name":"Artsyfartsy ApS","addr":"Produktionsvej 12, 2600","time":"16:00-17:00"},{"type":"Fast","zip":"2450","name":"CycleIT ApS","addr":"Taastrupgårdsvej 20, 2630","time":"14:30-15:30"},{"type":"Fast","zip":"2450","name":"Hamonoya ApS","addr":"Ejby Industrivej 91, 2600","time":"15:00-16:00"},{"type":"Ringer","zip":"2450","name":"Bad & Fliser A/S","addr":"Vallensbækvej 6, 2605","time":"13:00-14:00"},{"type":"Fast","zip":"2450","name":"Magnetz og Magnordic ApS","addr":"Ejby Industrivej 28A, 2600","time":"15:00-16:00"},{"type":"Fast","zip":"2450","name":"Biofarma Logistik A/S","addr":"Naverland 22, 2600","time":"15:00-15:30"},{"type":"Fast","zip":"2450","name":"Kirkebjergkiosken","addr":"Park Alle 288, 2605","time":"08:00-10:00"},{"type":"Fast","zip":"2450","name":"Kvickly Brøndby","addr":"Nygårds Plads 29, 2605","time":"09:00-11:00"},{"type":"Fast","zip":"2450","name":"Ecom Danmark ApS","addr":"Værkstedsgården 11 1, 2620","time":"15:00-16:00"},{"type":"Fast","zip":"2450","name":"Easysteel A/S","addr":"Hesselager 19, 2605","time":"13:00-14:30"},{"type":"Fast","zip":"2450","name":"SuperBrugsen Brøndby","addr":"Søndre Ringvej 45A, 2605","time":"09:00-11:00"}],"2451":[{"type":"Fast","zip":"2451","name":"Cotter // Copenhagen Fabrication ApS","addr":"Fabriksparken 1, 2600","time":"14:00-15:00"},{"type":"Fast","zip":"2451","name":"Hunkøn ApS","addr":"Fabriksparken 19, 2600","time":"15:00-16:00"},{"type":"Ringer","zip":"2451","name":"Molytex A/S","addr":"Smedeland 12, 2600","time":"14:00-15:00"},{"type":"Fast","zip":"2451","name":"Flash og Fotobutikken","addr":"Fabriksparken 23, 2600","time":"14:30-15:30"},{"type":"Speciel","zip":"2451","name":"Capp2","addr":"Fabriksparken 10 A, 2600","time":"13:30-14:30"},{"type":"Ringer","zip":"2451","name":"Best-AV A/S","addr":"Fabriksparken 14, 2600","time":"13:00-15:00"},{"type":"Fast","zip":"2451","name":"Kebomed A/S","addr":"Formervangen 5, 2600","time":"14:30-15:00"},{"type":"Fast","zip":"2451","name":"Telefon Service ApS","addr":"Naverland 2, st., 2600","time":"15:00-16:00"},{"type":"Fast","zip":"2451","name":"Skandinavisk Logistik A/S","addr":"Smedeland 18, 2600","time":"15:00-16:00"},{"type":"Fast","zip":"2451","name":"Diebold Nixdorf A/S","addr":"Fabriksparken 20, 2600","time":"14:00-15:00"},{"type":"Fast","zip":"2451","name":"DT Group (Stark Glostrup)","addr":"Fabriksparken 2, 2600","time":"13:00-15:00"},{"type":"Fast","zip":"2451","name":"Electro-Oil International A/S","addr":"Gamle Landevej 2, 2600","time":"15:30-16:00"},{"type":"Fast","zip":"2451","name":"V. Løwener A/S","addr":"Smedeland 2, 2600","time":"14:00-14:30"},{"type":"Fast","zip":"2451","name":"Milcom Logistik og Distribution ApS","addr":"Farverland 6, 2600","time":"14:00-15:00"},{"type":"Fast","zip":"2451","name":"Naturlig ApS","addr":"Fabriksparken 10A, 2600","time":"14:30-15:30"},{"type":"Fast","zip":"2451","name":"DLT","addr":"Formervangen 17, 2600","time":"15:00-16:00"},{"type":"Fast","zip":"2451","name":"Telefon-Service","addr":"Naverland 2 st, 2600","time":"15:00-16:00"},{"type":"Fast","zip":"2451","name":"Tips Kiosken","addr":"Diget 42, 2600","time":"14:00-16:00"},{"type":"Fast","zip":"2451","name":"Carl Christensen A/S","addr":"Fabriksparken 19 - 21, 2600","time":"15:00-16:00"},{"type":"Fast","zip":"2451","name":"Doms","addr":"Formervangen 28, 2600","time":"12:00-14:00"}],"2452":[{"type":"Fast","zip":"2452","name":"Alstrøm, Din Isenkræmmer ApS","addr":"Hovedvejen 91 st, 2600","time":"16:00-17:00"},{"type":"Ringer","zip":"2452","name":"Audionova ApS","addr":"Hovedvejen 118 st 1, 2600","time":"12:00-15:00"},{"type":"Ringer","zip":"2452","name":"DKHC Glostrup","addr":"Jernbanevej 6, 2600","time":"13:00-15:00"},{"type":"Ringer","zip":"2452","name":"Paw Sko","addr":"Hovedvejen 91 st, 2600","time":"13:00-15:00"},{"type":"Fast","zip":"2452","name":"Securitas Technology","addr":"Sydvestvej 98, 2600","time":"09:00-10:00"},{"type":"Fast","zip":"2452","name":"Werd ApS","addr":"Sydvestvej 55, 2600","time":"16:00-17:00"},{"type":"Ringer","zip":"2452","name":"Erik Larsen og Søn. Glostrup ApS","addr":"Hovedvejen 219, 2600","time":"13:00-14:00"},{"type":"Fast","zip":"2452","name":"Power Glostrup","addr":"Hovedvejen 197 7, 2600","time":"12:00-15:00"},{"type":"Fast","zip":"2452","name":"Power Danmark A/S","addr":"Hovedvejen 197 st, 2600","time":"12:00-15:00"},{"type":"Fast","zip":"2452","name":"Spar Glostrup","addr":"Dalvangsvej 52, 2600","time":"10:00-12:00"},{"type":"Fast","zip":"2452","name":"Sukkerland","addr":"Hovedvejen 158, 2600","time":"13:00-15:00"},{"type":"Fast","zip":"2452","name":"Desi Bazar","addr":"Banegårdsvej 114 A, 2600","time":"11:00-13:00"},{"type":"Fast","zip":"2452","name":"Elite Købmand Glostrup","addr":"Glentevej 1, 2600","time":"13:00-15:00"},{"type":"Fast","zip":"2452","name":"Askovgaard","addr":"Nørre Alle 27, 2600","time":"14:00-16:00"},{"type":"Fast","zip":"2452","name":"Motorola","addr":"Sydvestvej 15, 2600","time":"12:45-13:15"},{"type":"Fast","zip":"2452","name":"Tøjeksperten Glostrup","addr":"Glostrup Shoppingcenter 20, 2600","time":"13:00-15:00"}],"2453":[{"type":"Ringer","zip":"2453","name":"Bording Danmark A/S","addr":"Ejby Industrivej 91, 2600","time":"13:30-14:30"},{"type":"Fast","zip":"2453","name":"Unidrain A/S","addr":"Ejby Industrivej 40, 2600","time":"13:00-14:00"},{"type":"Ringer","zip":"2453","name":"Jan Nygaard A/S","addr":"Erhvervsvej 1, 2600","time":"13:30-14:30"},{"type":"Fast","zip":"2453","name":"Verisure A/S","addr":"Hovedvejen 2, 2600","time":"14:00-15:00"},{"type":"Fast","zip":"2453","name":"VDL Bus & Coach Danmark A/S","addr":"Naverland 21, 2600","time":"14:00-16:00"},{"type":"Fast","zip":"2453","name":"Handel og Ingenør Duotec","addr":"Herstedøstervej 19, 2600","time":"14:00-14:30"},{"type":"Fast","zip":"2453","name":"KallIstos Equipment","addr":"Naverland 14, 2600","time":"14:30-15:30"},{"type":"Fast","zip":"2453","name":"Copycolor ApS","addr":"Naverland 2, 2600","time":"14:00-15:00"},{"type":"Ringer","zip":"2453","name":"Dbs Lys A/S","addr":"Ejby Industrivej 68, 2600","time":"14:00-15:00"},{"type":"Ringer","zip":"2453","name":"K2 ApS","addr":"Sofielundsvej 39, 2600","time":"12:00-15:00"},{"type":"Fast","zip":"2453","name":"TK Elevator Denmark A/S","addr":"Erhvervsvej 4, 2600","time":"13:15-14:15"},{"type":"Fast","zip":"2453","name":"Dansk E-Logistik ApS","addr":"Naverland 33, 2600","time":"16:00-16:30"},{"type":"Fast","zip":"2453","name":"Spar Ejby","addr":"Ejby Mosevej 7, 2600","time":"08:00-10:00"},{"type":"Fast","zip":"2453","name":"JustOneMoreRow.dk","addr":"Naverland 2 st, 2600","time":"14:30-15:30"},{"type":"Fast","zip":"2453","name":"Benjo ApS","addr":"Naverland 22A, 2600","time":"13:00-14:00"},{"type":"Fast","zip":"2453","name":"Triscan","addr":"Naverland 25-27, 2600","time":"14:00-15:00"}],"2454":[{"type":"Fast","zip":"2454","name":"Mads Nørgaard - Copenhagen A/S","addr":"Priorparken 524, 2605","time":"15:00-16:00"},{"type":"Ringer","zip":"2454","name":"All Graphic A/S","addr":"Vibeholms Allé 25, 2605","time":"11:00-12:00"},{"type":"Fast","zip":"2454","name":"Reipurth Dental","addr":"Nygårds Plads 2B, 2605","time":"15:00-16:00"},{"type":"Fast","zip":"2454","name":"Janax A/S","addr":"Priorparken 849, 2605","time":"14:30-15:30"},{"type":"Ringer","zip":"2454","name":"Cardboard ApS","addr":"Priorparken 886, 2605","time":"14:00-15:00"},{"type":"Ringer","zip":"2454","name":"Formegon ApS","addr":"Brøndby Stadion 20, 2605","time":"13:00-15:00"},{"type":"Fast","zip":"2454","name":"Heino Cykler ApS","addr":"Roskildevej 527, 2605","time":"15:00-16:00"},{"type":"Ringer","zip":"2454","name":"Enno Design ApS","addr":"Vibeholms Allé 8, 2605","time":"14:00-15:00"},{"type":"Fast","zip":"2454","name":"Shell Brøndby Roskildevej","addr":"Roskildevej 453, 2605","time":"10:00-12:00"},{"type":"Fast","zip":"2454","name":"Brøndby Minimarked","addr":"Brøndby Parkvej 4 A, 2605","time":"10:00-12:00"},{"type":"Fast","zip":"2454","name":"Hairtalk Danmark ApS","addr":"Brøndbyøstervej 84A, 2605","time":"13:00-15:00"},{"type":"Fast","zip":"2454","name":"Ortos A/S","addr":"Sognevej 25, 2605","time":"15:00-16:00"}],"2456":[{"type":"Fast","zip":"2456","name":"Sportyfied ApS","addr":"Solmarksvej 2, 2605","time":"15:00-16:00"},{"type":"Fast","zip":"2456","name":"Magnolia Brandhouse ApS","addr":"Park Alle 380, 2625","time":"15:00-16:00"},{"type":"Fast","zip":"2456","name":"Festbutikken ApS","addr":"Vallensbækvej 22B 3 tv, 2605","time":"15:30-16:30"},{"type":"Fast","zip":"2456","name":"Inter-Gastro ApS","addr":"Midtager 18, 2605","time":"14:30-15:30"},{"type":"Fast","zip":"2456","name":"IG Service ApS","addr":"Midtager 18, 2605","time":"15:00-16:00"},{"type":"Fast","zip":"2456","name":"Gastech-Energi A/S","addr":"Vallensbækvej 18F, 2605","time":"14:30-15:30"},{"type":"Fast","zip":"2456","name":"Tele 2100 ApS","addr":"Vallensbækvej 22A, 2605","time":"15:00-16:00"},{"type":"Ringer","zip":"2456","name":"Trykportalen ApS","addr":"Sandager 1, 2605","time":"13:00-15:00"},{"type":"Fast","zip":"2456","name":"Benny Anker Jensen","addr":"Hesselager 25, 2605","time":"13:30-14:00"},{"type":"Fast","zip":"2456","name":"Audio-Visuelt Centrum A/S","addr":"Hedeager 2, 2605","time":"14:30-15:30"},{"type":"Fast","zip":"2456","name":"Cabcon A/S","addr":"Park Allé 350E, 2605","time":"14:00-15:00"},{"type":"Fast","zip":"2456","name":"Carl J. Permin A/S","addr":"Banemarksvej 38, 2605","time":"14:30-15:33"},{"type":"Ringer","zip":"2456","name":"Horze Danmark","addr":"Vallensbækvej 22A, 2605","time":"14:00-17:00"},{"type":"Speciel","zip":"2456","name":"Sit'n Sleep A/S","addr":"Kornmarksvej 25, 2605","time":"13:30-14:30"},{"type":"Fast","zip":"2456","name":"Auktionshuset.Com","addr":"Midtager 13, 2605","time":"13:00-14:00"},{"type":"Ringer","zip":"2456","name":"Schou Rasmussen A/S","addr":"Lyngager 8, 2605","time":"11:00-13:00"},{"type":"Fast","zip":"2456","name":"Daypaq ApS","addr":"Midtager 29, 2605","time":"14:00-15:00"},{"type":"Fast","zip":"2456","name":"DKKamera ApS","addr":"Lyngager 9, 2605","time":"14:00-15:00"},{"type":"Fast","zip":"2456","name":"Nd-Group ApS","addr":"Nyager 5, 2605","time":"14:00-16:00"},{"type":"Fast","zip":"2456","name":"Ok Plus","addr":"Jydekrogen 1, 2625","time":"14:00-16:00"},{"type":"Speciel","zip":"2456","name":"Alu Pro","addr":"Midtager 9A, 2605","time":"14:00-16:00"},{"type":"Fast","zip":"2456","name":"Toolworld ApS","addr":"Horsbred 132, 2625","time":"15:00-16:00"}],"2457":[{"type":"Fast","zip":"2457","name":"Sjællands Erhvervsbeklædning A/S","addr":"Søndre Ringvej 35A, 2605","time":"13:00-15:00"},{"type":"Fast","zip":"2457","name":"AV Center A/S","addr":"Søndre Ringvej 39, 2605","time":"14:00-15:00"}],"2458":[{"type":"Fast","zip":"2458","name":"Kobra.DK ApS","addr":"Gisselfeldvej 6, 2665","time":"15:30-16:30"},{"type":"Fast","zip":"2458","name":"Nextsneakers","addr":"Kirkebjerg Parkvej 12 1, 2605","time":"15:00-16:00"},{"type":"Fast","zip":"2458","name":"Candy Express ApS","addr":"Vallensbækvej 18C st, 2605","time":"15:00-16:00"},{"type":"Fast","zip":"2458","name":"Organized ApS","addr":"Vallensbækvej 24, 2605","time":"14:30-15:30"},{"type":"Fast","zip":"2458","name":"Detail Data Danmark","addr":"Kirkebjerg Parkvej 9 st, 2605","time":"14:30-15:30"},{"type":"Speciel","zip":"2458","name":"Coolhair ApS","addr":"Bækkeskovvej 9, 2665","time":"15:30-16:30"},{"type":"Fast","zip":"2458","name":"Centerkiosken","addr":"Brøndby Strand Centrum 32, 2660","time":"11:00-13:00"},{"type":"Fast","zip":"2458","name":"Elite Købmand Brøndby St","addr":"Hallingparken 3 C, 2660","time":"14:00-16:00"},{"type":"Fast","zip":"2458","name":"OK Plus Brøndby Strand","addr":"Gammel Køge Landevej 722, 2660","time":"10:00-12:00"}],"2459":[{"type":"Fast","zip":"2459","name":"Den Kinesiske Købmand ApS","addr":"Roholmsvej 17D, 2620","time":"14:00-15:00"},{"type":"Fast","zip":"2459","name":"Salonsupport.dk A/S","addr":"Læhegnet 71, 2620","time":"12:00-15:30"},{"type":"Fast","zip":"2459","name":"Coop Danmark A/S","addr":"Roskildevej 65, 2620","time":"15:00-16:00"},{"type":"Fast","zip":"2459","name":"Condi ApS","addr":"Roskildevej 30, 2620","time":"15:00-16:00"},{"type":"Fast","zip":"2459","name":"Falck Sercutias","addr":"Roskildevej 157, 2620","time":"14:00-15:00"},{"type":"Fast","zip":"2459","name":"Orloff Firmatøj A/S","addr":"Roholmsvej 10 A, 2620","time":"14:30-15:30"},{"type":"Fast","zip":"2459","name":"Prodesign A/S","addr":"Roskildevej 16, 2620","time":"13:00-14:00"},{"type":"Fast","zip":"2459","name":"Sunflux ApS","addr":"Roholmsvej 10L, 2620","time":"14:00-15:00"},{"type":"Ringer","zip":"2459","name":"UV-Sport","addr":"Roskildevej 16A 1, 2620","time":"10:00-12:00"},{"type":"Ringer","zip":"2459","name":"Ajour Nordic ApS","addr":"Herstedøstervej 27, 2620","time":"14:00-15:00"},{"type":"Fast","zip":"2459","name":"Stens Læderhandel","addr":"Roholmsvej 12 R, 2620","time":"11:00-11:30"},{"type":"Fast","zip":"2459","name":"Coop - nonfood","addr":"Roskildevej 35, 2620","time":"15:00-16:00"},{"type":"Ringer","zip":"2459","name":"Jungersen Grafik","addr":"Holsbjergvej 39, 2620","time":"13:00-15:00"},{"type":"Fast","zip":"2459","name":"Innographic ApS","addr":"Stensmosevej 24 A, port N, 2620","time":"14:00-15:00"},{"type":"Ringer","zip":"2459","name":"Davidsens Tømmerhandel A/S","addr":"Herstedvang 2C, 2620","time":"13:00-15:00"},{"type":"Ringer","zip":"2459","name":"Ejner Hessel A/S","addr":"Roskildevej 20, 2620","time":"14:00-16:00"},{"type":"Fast","zip":"2459","name":"Securit-Nordic ApS","addr":"Herstedøstervej 29D, 2620","time":"14:00-15:00"},{"type":"Fast","zip":"2459","name":"Galgebakkens Købmand","addr":"Galgebakken Torv 10, 2620","time":"08:00-10:00"},{"type":"Fast","zip":"2459","name":"A Table Story I/S","addr":"Stensmosevej 24L, 2620","time":"13:00-15:00"},{"type":"Fast","zip":"2459","name":"Børnefidusen ApS","addr":"Rytterhusene 38, 2620","time":"13:00-15:00"},{"type":"Fast","zip":"2459","name":"Retail24 Danmark ApS","addr":"Roholmsvej 14 st, 2620","time":"14:00-16:00"},{"type":"Fast","zip":"2459","name":"Kvickly Albertslund","addr":"Stationsporten 8, 2620","time":"08:00-10:00"},{"type":"Fast","zip":"2459","name":"Elite Købmand Albertslund","addr":"Kanalens Kvt 132, 2620","time":"12:00-14:00"}],"2460":[{"type":"Fast","zip":"2460","name":"Jørnæs Productions","addr":"Skyttehusene 32, 2620","time":"15:00-16:00"},{"type":"Fast","zip":"2460","name":"H P Skjalm","addr":"Ringager 17, 2605","time":"14:00-15:00"},{"type":"Fast","zip":"2460","name":"H.P. Valdal A/S","addr":"Engager 9, 2605","time":"13:45-14:15"},{"type":"Ringer","zip":"2460","name":"Imerco Albertslund","addr":"Stationstorvet 20, 2620","time":"11:00-13:00"},{"type":"Fast","zip":"2460","name":"Dentalservice Danmark A/S","addr":"Ringager 22, 2605","time":"13:00-14:00"},{"type":"Ringer","zip":"2460","name":"Scan Office ApS","addr":"Ringager 19, 2605","time":"13:00-14:30"},{"type":"Fast","zip":"2460","name":"Borg & Bigum Danmark A/S","addr":"Rørvang 10, 2620","time":"13:30-14:30"},{"type":"Fast","zip":"2460","name":"Sacomed ApS","addr":"Midtager 29 st, 2605","time":"14:00-15:00"},{"type":"Fast","zip":"2460","name":"Interglas ApS","addr":"Kornmarksvej 10, 2605","time":"14:30-15:30"},{"type":"Fast","zip":"2460","name":"G4S","addr":"Kornmarksvej 26, 2605","time":"14:00-14:45"},{"type":"Fast","zip":"2460","name":"Bella Beauty ApS","addr":"Kornmarksvej 6, 2605","time":"14:00-15:00"},{"type":"Fast","zip":"2460","name":"Shell Albertslund","addr":"Egelundsvej 5A, 2620","time":"10:00-12:00"},{"type":"Fast","zip":"2460","name":"Obo Bettermann ApS","addr":"Banemarksvej 80, 2605","time":"15:00-16:00"}],"2461":[{"type":"Fast","zip":"2461","name":"Telegiganten ApS","addr":"Taastrup Hovedgade 66, 2630","time":"10:00-12:00"},{"type":"Fast","zip":"2461","name":"Flo-Code A/S","addr":"Husmandsvej 25, 2630","time":"10:00-11:30"},{"type":"Fast","zip":"2461","name":"Q8 Taastrup","addr":"Taastrup Hovedgade 108B, 2630","time":"08:00-10:00"},{"type":"Fast","zip":"2461","name":"Telegiganten ApS - PS","addr":"Taastrup Hovedgade 66, 2630","time":"10:00-12:00"}],"2462":[{"type":"Ringer","zip":"2462","name":"Fibox A/S","addr":"Taastrup Hovedgade 101 1, 2630","time":"11:00-13:00"},{"type":"Fast","zip":"2462","name":"Kvickly Taastrup","addr":"Taastrup Torv 18, 2630","time":"14:00-16:00"}],"2463":[{"type":"Ringer","zip":"2463","name":"Ok Energiteknik A/S","addr":"Dybendalsvænget 3, 2630","time":"13:00-15:00"},{"type":"Ringer","zip":"2463","name":"Georg Fischer A/S","addr":"Roskildevej 342E, 2630","time":"13:00-15:00"},{"type":"Ringer","zip":"2463","name":"ALD Carmarket","addr":"Mårkærvej 4 - 6, 2630","time":"14:00-15:00"},{"type":"Fast","zip":"2463","name":"Rosengren / Gunnebo","addr":"Hørsvinget 5 - 7, 2630","time":"14:45-15:15"},{"type":"Ringer","zip":"2463","name":"Babysam","addr":"Måkærvej 15 d, 2630","time":"13:00-15:00"},{"type":"Ringer","zip":"2463","name":"Coop Trading","addr":"Helgeshøj Alle 57 2, 2630","time":"11:00-13:00"},{"type":"Fast","zip":"2463","name":"Soco System A/S","addr":"Helgeshøj Alle 16 D, 2630","time":"15:00-16:00"},{"type":"Fast","zip":"2463","name":"K. C. Pedersen","addr":"Helgeshøj Alle 10, 2630","time":"14:00-15:00"},{"type":"Fast","zip":"2463","name":"Sunrise Medical ApS","addr":"Mårkærvej 5, 2630","time":"14:30-15:30"},{"type":"Fast","zip":"2463","name":"www.Coolpriser.DK","addr":"Roskildevej 328, 2630","time":"15:00-16:00"},{"type":"Fast","zip":"2463","name":"SK Svejsemateriel A/S","addr":"Hørskætten 28, 2630","time":"10:30-12:30"},{"type":"Fast","zip":"2463","name":"Stellini Kaffe ApS","addr":"Hørskætten 4 A, 2630","time":"14:00-15:00"},{"type":"Fast","zip":"2463","name":"Vaillant A/S","addr":"Dybendalsvænget 3, 2630","time":"14:30-15:30"},{"type":"Fast","zip":"2463","name":"Depresso Coffee ApS","addr":"Hørskætten 4A, 2630","time":"15:00-15:30"},{"type":"Fast","zip":"2463","name":"Sport Direct Taastrup","addr":"Husby Alle 15, 2630","time":"14:00-15:00"},{"type":"Fast","zip":"2463","name":"Metabo Danmark A/S","addr":"Helgeshøj Alle 12, 2630","time":"14:00-14:45"},{"type":"Fast","zip":"2463","name":"Hikoki Power Tools Denmark A/S","addr":"Helgeshøj Alle 22, 2630","time":"14:00-14:45"}],"2464":[{"type":"Fast","zip":"2464","name":"Sing Tehus ApS","addr":"Rugvænget 19B, 2630","time":"14:00-15:00"},{"type":"Fast","zip":"2464","name":"ZZ Games ApS","addr":"Rugvænget 44, 2630","time":"14:30-15:30"},{"type":"Fast","zip":"2464","name":"Kurergruppen Danmark ApS","addr":"Rugvænget 56, 2630","time":"14:30-15:30"},{"type":"Fast","zip":"2464","name":"Heidemann Grafisk ApS","addr":"Høje Taastrup Boulevard 51 ( nr. 47 ), 2630","time":"14:00-15:00"},{"type":"Fast","zip":"2464","name":"Kamph Honeteknik A/S","addr":"Rugvænget 11 B, 2630","time":"14:00-15:00"},{"type":"Ringer","zip":"2464","name":"Scansign København A/S, Afh 14:30-15:30","addr":"Kuldyssen 4, 2630","time":"14:00-15:00"},{"type":"Fast","zip":"2464","name":"Loomis Pay Denmark ApS","addr":"Litauen Alle 1, 2630","time":"13:30-14:30"},{"type":"Ringer","zip":"2464","name":"Labellab","addr":"Rugvænget 19K, 2630","time":"14:00-15:00"},{"type":"Fast","zip":"2464","name":"Fitness Engros A/S","addr":"Snedkervej 4 - 6, 2630","time":"13:00-14:00"},{"type":"Fast","zip":"2464","name":"Heka Dental A/S","addr":"Litauen Alle 4, 2630","time":"14:00-14:30"},{"type":"Fast","zip":"2464","name":"Ønskebørn City2","addr":"Cityringen 22, 2630","time":"11:00-13:00"},{"type":"Fast","zip":"2464","name":"3 Butikken City-2","addr":"Cityringen 22 - Butik 261, 2630","time":"11:00-13:00"},{"type":"Fast","zip":"2464","name":"Tjellesen Max Jenne A/S","addr":"Ole Lippmanns Vej 2, 2630","time":"14:30-15:00"},{"type":"Fast","zip":"2464","name":"DSB 7-Eleven Høje Taastrup Station","addr":"Banestrøget 1, 2630","time":"09:00-11:00"},{"type":"Fast","zip":"2464","name":"Dansk Retursystem A/S","addr":"Bredebjergvej 10, 2630","time":"14:00-16:00"},{"type":"Fast","zip":"2464","name":"Tøjeksperten ( City 2 )","addr":"Cityringen 4, Butik 313, 2630","time":"13:00-15:00"},{"type":"Fast","zip":"2464","name":"Fresenius Medical Care","addr":"Oldenburg Alle 1, St., 2630","time":"14:00-15:00"},{"type":"Fast","zip":"2464","name":"Silvan City 2","addr":"Cityringen 18, 2630","time":"17:00-18:30"}],"2466":[{"type":"Fast","zip":"2466","name":"Bestway Trading ApS","addr":"Industrigrenen 21, 2635","time":"16:00-17:00"},{"type":"Fast","zip":"2466","name":"Hobbii.dk","addr":"Kildebrøndevej 42, 2670","time":"14:00-15:00"},{"type":"Fast","zip":"2466","name":"Exotic Mix ApS","addr":"Baldershøj 26C, 2635","time":"16:00-18:00"},{"type":"Ringer","zip":"2466","name":"Tempo Både ApS","addr":"Søhesten 8 st, 2635","time":"11:00-13:00"},{"type":"Fast","zip":"2466","name":"Huma.dk ApS","addr":"Industrigrenen 21 1, 2635","time":"15:00-16:00"},{"type":"Fast","zip":"2466","name":"Skandinavisk Logistik A/S","addr":"Broenge 10 - 12, 2635","time":"15:00-16:00"},{"type":"Fast","zip":"2466","name":"First Lager","addr":"Kildebrøndevej 44B, 2670","time":"15:00-16:00"},{"type":"Fast","zip":"2466","name":"DSB 7-Eleven Ishøj Station","addr":"Vejlebrovej 35, 2635","time":"08:00-10:00"},{"type":"Fast","zip":"2466","name":"Min Købmand Ishøj","addr":"Strandgården 13B, 2635","time":"14:00-16:00"},{"type":"Fast","zip":"2466","name":"Dansk Filter SHop","addr":"Ejby Industrivej 28A, 2600","time":"15:00-16:00"}],"2467":[{"type":"Fast","zip":"2467","name":"Sartorvet.Com ApS","addr":"Broenge 11, 2635","time":"14:00-16:00"},{"type":"Fast","zip":"2467","name":"Trykfabrikken","addr":"Baldersbækvej 24 - port 3, 2635","time":"14:00-15:00"},{"type":"Ringer","zip":"2467","name":"Modul Transport A/S","addr":"Broenge 1, 2635","time":"13:00-15:00"},{"type":"Fast","zip":"2467","name":"Tomra","addr":"Brogrenen 3, 2635","time":"14:00-15:00"},{"type":"Fast","zip":"2467","name":"Ro Copenhagen ApS","addr":"Baldershøj 27, 2635","time":"14:00-15:00"},{"type":"Fast","zip":"2467","name":"J-Ware Scandinavia ApS","addr":"Baldershøj 36F, 2635","time":"13:00-15:00"},{"type":"Ringer","zip":"2467","name":"Thurah Transport A/S","addr":"Vejleåvej 1, 2635","time":"13:00-15:00"},{"type":"Fast","zip":"2467","name":"Power Ishøj","addr":"Industridalen 11, 2635","time":"13:00-15:00"},{"type":"Fast","zip":"2467","name":"Focus Dental Service","addr":"Baldershøj 17 A, 2635","time":"14:00-15:00"},{"type":"Fast","zip":"2467","name":"C.L. Seifert A/S","addr":"Baldersbækvej 24, 2635","time":"14:00-15:00"},{"type":"Fast","zip":"2467","name":"Q8 Ishøj Stationsvej","addr":"Ishøj Stationsvej 8, 2635","time":"07:00-09:00"},{"type":"Fast","zip":"2467","name":"Golfkompagniet","addr":"Køgevej 209, 2635","time":"15:00-16:00"},{"type":"Ringer","zip":"2467","name":"BMW Ishøj","addr":"Baldersbækvej 13, 2635","time":"13:00-15:00"},{"type":"Fast","zip":"2467","name":"Stark / KTH Trælast","addr":"Industribuen 15, 2635","time":"12:00-14:00"},{"type":"Fast","zip":"2467","name":"Zepro","addr":"Industrikrogen 14, 2635","time":"13:45-14:00"},{"type":"Fast","zip":"2467","name":"Elmodan A/S","addr":"Baldersbækvej 21, 2635","time":"14:00-15:00"}],"2468":[{"type":"Ringer","zip":"2468","name":"Imerco Solrød","addr":"Solrød Center 71, 2680","time":"11:00-13:00"},{"type":"Ringer","zip":"2468","name":"Mr. Niels Ove","addr":"Solrød Center 29, 2680","time":"11:00-13:00"},{"type":"Fast","zip":"2468","name":"Kandii // AUCD ApS","addr":"Solrød Center 68, 2680","time":"12:00-13:00"},{"type":"Fast","zip":"2468","name":"SuperBrugsen Solrød Strand","addr":"Solrød Center 23, 2680","time":"07:00-09:00"},{"type":"Fast","zip":"2468","name":"OK Plus","addr":"Solrød Strandvej 154, 2680","time":"07:00-09:00"}],"2469":[{"type":"Fast","zip":"2469","name":"Uldtøj.DK ApS","addr":"Frydendalsvej 8, 2665","time":"13:00-14:00"},{"type":"Fast","zip":"2469","name":"Superbrugsen Vallensbæk","addr":"Vallensbæk Stationstorv 80, 2665","time":"08:00-10:00"},{"type":"Ringer","zip":"2469","name":"Nordlens ApS","addr":"Bækkeskovvej 4, 2665","time":"13:00-14:00"},{"type":"Fast","zip":"2469","name":"Develo ApS","addr":"Vejlegårdsvej 59, 2665","time":"15:00-16:00"}],"2470":[{"type":"Fast","zip":"2470","name":"Spotlight A/S","addr":"Solrød Byvej 15, 2680","time":"14:00-15:00"},{"type":"Fast","zip":"2470","name":"Malle & Co","addr":"Solrød Byvej 15, 2680","time":"14:00-15:00"},{"type":"Fast","zip":"2470","name":"7-Eleven Solrød Strand","addr":"Janesvej 9, 2680","time":"14:00-16:00"},{"type":"Fast","zip":"2470","name":"Emilys IVS","addr":"Åsvej 3, 2680","time":"15:00-16:00"}],"2471":[{"type":"Fast","zip":"2471","name":"Modernroom.DK ApS","addr":"Metalgangen 19B, 2690","time":"13:00-14:00"},{"type":"Ringer","zip":"2471","name":"Bourvanil Compagniet I/S","addr":"Navergangen 1, 2690","time":"12:00-13:30"},{"type":"Fast","zip":"2471","name":"MJ Handel ApS","addr":"Svejsegangen 6A, 2690","time":"14:30-15:30"},{"type":"Fast","zip":"2471","name":"Poul Holm sport Aps","addr":"Drejergangen 12A, 2690","time":"14:00-15:00"},{"type":"Fast","zip":"2471","name":"Green Dog ApS","addr":"Rørgangen 16, 2690","time":"13:00-15:00"},{"type":"Fast","zip":"2471","name":"Xtrahunt","addr":"Drejergangen 9B, 2690","time":"15:00-16:00"},{"type":"Fast","zip":"2471","name":"Wadils 2022 ApS","addr":"Metalgangen 6B, 2690","time":"12:00-13:00"},{"type":"Fast","zip":"2471","name":"Xtrahunt ApS","addr":"Drejergangen 9B, 2690","time":"15:00-16:00"},{"type":"Fast","zip":"2471","name":"Printwise","addr":"Metalgangen 9E, 3, 2690","time":"14:00-15:00"},{"type":"Fast","zip":"2471","name":"Frie Trading","addr":"Drejergangen 5, 2690","time":"14:00-15:00"},{"type":"Fast","zip":"2471","name":"Holmes ApS","addr":"Motorgangen 7 A, 2690","time":"15:00-16:00"},{"type":"Fast","zip":"2471","name":"SFS Sport-Fashion-street ApS","addr":"Rørgangen 12, Port 3, 2690","time":"13:00-15:00"},{"type":"Ringer","zip":"2471","name":"Your Yoga Shop ApS","addr":"Egedal 15, 2690","time":"12:00-14:00"},{"type":"Fast","zip":"2471","name":"SFS Sport-Fashion-street ApS","addr":"Rørgangen 12 3, 2690","time":"13:00-15:00"},{"type":"Fast","zip":"2471","name":"Rafa Lys ApS","addr":"Rørgangen 6, 2690","time":"12:00-14:00"},{"type":"Ringer","zip":"2471","name":"Svendsen Sport A/S","addr":"Drejergangen 3A, 2690","time":"12:00-14:00"},{"type":"Fast","zip":"2471","name":"Bestphone ApS","addr":"Motorgangen 7A, 2690","time":"15:00-16:00"}],"2472":[{"type":"Fast","zip":"2472","name":"Hobart Scandinavia ApS","addr":"Håndværkerbyen 27, 2670","time":"13:30-14:30"},{"type":"Ringer","zip":"2472","name":"Sports-tryk.dk","addr":"Håndværkerbyen 39, 2670","time":"13:00-15:00"},{"type":"Fast","zip":"2472","name":"Tilfrisoren.dk","addr":"Håndværkerbyen 37, 2670","time":"15:00-16:00"},{"type":"Fast","zip":"2472","name":"Danish Bike ApS","addr":"Gadesvinget 11, 2670","time":"13:30-14:30"},{"type":"Fast","zip":"2472","name":"Moster's Skur ApS","addr":"Håndværkerbyen 27, 2670","time":"14:00-15:00"},{"type":"Ringer","zip":"2472","name":"Beauty&Art V. Stephanie Vishart","addr":"Fyrrehegnet 44, 2670","time":"10:00-12:00"},{"type":"Fast","zip":"2472","name":"Festbutikken ApS","addr":"Håndværkervænget 21, 2670","time":"14:30-15:30"},{"type":"Fast","zip":"2472","name":"Bennike & Wander A/S","addr":"Håndværkerbyen 57, 2670","time":"14:00-15:00"},{"type":"Fast","zip":"2472","name":"Kioskland","addr":"Greve Midtby Center 14B, 2670","time":"14:00-16:00"},{"type":"Fast","zip":"2472","name":"Softliving.dk","addr":"Håndværkerbyen 27, 2670","time":"13:00-14:00"},{"type":"Fast","zip":"2472","name":"Q8 Greve","addr":"Mosede Strandvej 54, 2670","time":"09:00-11:00"}],"2473":[{"type":"Fast","zip":"2473","name":"RoomMate ApS","addr":"Greve Main 9, 2670","time":"13:00-15:00"},{"type":"Ringer","zip":"2473","name":"Neye Fonden","addr":"Greve Main 32, 2670","time":"14:30-15:00"},{"type":"Ringer","zip":"2473","name":"Totoma Group ApS","addr":"Greve Main 38, 2670","time":"13:00-15:00"},{"type":"Fast","zip":"2473","name":"Jaca Tools ApS","addr":"Korskildelund 6, 2670","time":"12:30-13:30"},{"type":"Fast","zip":"2473","name":"DBC Care A/S","addr":"Greve Main 1, 2670","time":"14:30-15:30"},{"type":"Fast","zip":"2473","name":"GodsHotel & Transport ApS","addr":"Ventrupparken 2, 2670","time":"14:30-15:30"},{"type":"Fast","zip":"2473","name":"Metal Work Danmark A/S","addr":"Korskildelund 1, 2670","time":"14:00-15:00"},{"type":"Ringer","zip":"2473","name":"Man Truck & Bus Danmark A/S","addr":"Ventrupparken 6, 2670","time":"14:00-15:00"},{"type":"Fast","zip":"2473","name":"GodsHotel & Transport ApS","addr":"Rugkobbel 254, 6200","time":"14:30-15:30"},{"type":"Fast","zip":"2473","name":"Onlinekids ApS","addr":"Greve Main 23, 2670","time":"14:30-15:30"},{"type":"Fast","zip":"2473","name":"Silvan Greve","addr":"Ventrupparken 18, 2670","time":"09:00-11:00"}],"2475":[{"type":"Ringer","zip":"2475","name":"Humac A/S","addr":"Over Bølgen 2, 2670","time":"11:00-13:00"},{"type":"Fast","zip":"2475","name":"Titgemeyer Skandinavian","addr":"Lunikvej 32A, 2670","time":"14:00-15:00"},{"type":"Ringer","zip":"2475","name":"Skechers Waves Greve","addr":"Over Bølgen 2A 1, 2670","time":"12:00-14:00"},{"type":"Fast","zip":"2475","name":"Nicobelli ApS","addr":"Lunikvej 5D, 2670","time":"14:30-15:00"},{"type":"Fast","zip":"2475","name":"Hedebogård A/S","addr":"Vangeleddet 57, 2670","time":"12:00-13:00"},{"type":"Fast","zip":"2475","name":"Paperdeluxe.DK ApS","addr":"Geminivej 4, 2670","time":"13:00-14:00"},{"type":"Ringer","zip":"2475","name":"Ancher's Havecenter ApS","addr":"Kildebrøndevej 50, 2670","time":"13:00-14:00"},{"type":"Fast","zip":"2475","name":"Golf Experten","addr":"Agenavej 39B, 2670","time":"14:00-14:30"},{"type":"Fast","zip":"2475","name":"Nye Gardiner A/S","addr":"Agenavej 35, 2670","time":"14:00-15:00"},{"type":"Fast","zip":"2475","name":"Besko A/S","addr":"Geminivej 27, 2670","time":"14:30-15:30"},{"type":"Fast","zip":"2475","name":"Vermeer Danmark A/S","addr":"Agenavej 22, 2670","time":"14:45-15:00"},{"type":"Ringer","zip":"2475","name":"Neye Lædervarer","addr":"Over Bølgen 2A 1, 2670","time":"11:00-13:00"},{"type":"Fast","zip":"2475","name":"Surf Og Ski Greve ApS","addr":"Geminivej 2 st, 2670","time":"15:00-17:00"},{"type":"Fast","zip":"2475","name":"Jydekrog ( JS Komponenter )","addr":"Lunikvej 38A, 2670","time":"15:30-16:00"},{"type":"Fast","zip":"2475","name":"Søren Søgaard A/S","addr":"Agenavej 39 F, 2670","time":"14:00-15:00"},{"type":"Fast","zip":"2475","name":"GLS Pakkeshop Waves","addr":"Over Bølgen 10 st 19c, 2670","time":"14:00-16:00"},{"type":"Fast","zip":"2475","name":"Ilsfort Service ApS","addr":"Hundigevej 79F, 2670","time":"13:30-14:30"}]},"saturday":[{"label":"Tur 1- 2600 & 2605","stops":[{"num":1,"name":"Ok plus","port":"805","time":"08:00-10:00"},{"num":2,"name":"superbrugaen","port":"805","time":"09:00-11:00"},{"num":3,"name":"kirkebjerg kiosken","port":"802","time":"09:00-11:00"},{"num":4,"name":"minimakred","port":"803","time":"09:00-11:00"},{"num":5,"name":"kvickly","port":"802","time":"11:00-13:00"},{"num":6,"name":"shell brøndby","port":"803","time":"09:00-11:00"},{"num":7,"name":"spar Glostrup","port":"810","time":"10:00-12:00"},{"num":8,"name":"tips kiosken","port":"809","time":"10:00-12:00"},{"num":9,"name":"ejby mosevej","port":"811","time":"10:00-12:00"},{"num":10,"name":"elite købemand","port":"811","time":"10:00-12:00"},{"num":11,"name":"Sukkerland","port":"810","time":"11:00-13:00"},{"num":12,"name":"Desi bazar","port":"810","time":"11:00-13:00"}]},{"label":"Tur 2- 2630 & 2620","stops":[{"num":1,"name":"DSB Banestrøget","port":"822","time":"10:00-12:00"},{"num":2,"name":"Q8 taastrup","port":"819","time":"08:00-10:00"},{"num":3,"name":"kvkly taastrup","port":"820","time":"10:00-12:00"},{"num":4,"name":"shell egelundsvej 5","port":"813","time":"08:00-10:00"},{"num":5,"name":"galgebakken","port":"812","time":"08:00-10:00"},{"num":6,"name":"DSB Albertslund","port":"813","time":"10:00-12:00"},{"num":7,"name":"Kvikly albertslund","port":"813","time":"10:00-12:00"},{"num":8,"name":"elite købmand","port":"813","time":"08:00-10:00"},{"num":10,"name":"telegiganten Taastrup","port":"819","time":"10:00-12:00"},{"num":11,"name":"Silvan city2","port":"823","time":"10:00-12:00"}]},{"label":"Tur 3- 2670 & 2690","stops":[{"num":1,"name":"Kioskland Greve","port":"828","time":"08:00-10:00"},{"num":2,"name":"Q8 Greve","port":"828","time":"08:00-10:00"},{"num":3,"name":"Meny Karlslunde","port":"823","time":"08:00-10:00"},{"num":5,"name":"Ok plus Solrød","port":"818","time":"09:00-11:00"},{"num":6,"name":"SuperBrugsen Solrød","port":"818","time":"09:00-11:00"},{"num":7,"name":"7 eleven Solrød","port":"817","time":"09:00-11:00"},{"num":8,"name":"Silvan Greve","port":"816","time":"11:00-13:00"}]},{"label":"Tur 4- 2635 & 2625","stops":[{"num":1,"name":"Q8 Ishøj","port":"815","time":"08:00-10:00"},{"num":2,"name":"Waves pakkershop","port":"825","time":"08:00-10:00"},{"num":3,"name":"Min købmand Ishøj","port":"816","time":"08:00-10:00"},{"num":4,"name":"7-eleven Ishøj","port":"816","time":"08:00-10:00"},{"num":5,"name":"SuperBrugsen Vallensbæk","port":"806","time":"09:00-11:00"},{"num":6,"name":"Ok plus Brøndby strand","port":"804","time":"08:00-10:00"},{"num":7,"name":"Elite købmand Brøndby strand","port":"804","time":"09:00-11:00"},{"num":8,"name":"Center kiosken Brøndby strand","port":"804","time":"12:00-14:00"}]}],"lev_kontrol":[{"time":"07:00-09:00","shops":[{"name":"Q8 Ishøj Stationsvej","addr":"Ishøj Stationsvej 8 2635Ishøj"},{"name":"OK Plus Solrød","addr":"Strand Solrød Strandvej 150-154"},{"name":"Meny Karlslunde","addr":"Karlslunde Parkvej 72690Karlslunde"},{"name":"GLS PakkeShop","addr":"Højager 2-4 2630Taastrup"}]},{"time":"08:00-10:00","shops":[{"name":"Min Købmand Ejby","addr":"Ejbymosevej 7 2600Glostrup"},{"name":"Kirkebjerg Kiosken","addr":"Park Allé 288 2605Brøndby"},{"name":"Galgebakkens Købmand","addr":"Galgebakken Torv 10 2620Albertslund"},{"name":"Kvickly Albertslund","addr":"Stationsporten 8"},{"name":"OK Plus Vallensbæk","addr":"Jydekrogen 1 2625"},{"name":"Q8 Taastrup","addr":"Taastrup Hovedgade 108"},{"name":"Min Købmand Ishøj","addr":"Strandgården 13B"},{"name":"Ishøj DSB 7-Eleven","addr":"Ishøj Station"},{"name":"Superbrugsen Vallensbæk Vallensbæk Stationstorv 80","addr":"2665"},{"name":"GLS PakkeShop Waves","addr":"Over Bølgen 10, 19C"},{"name":"Greve Kioskland","addr":"Stationsholmen 10B"},{"name":"7-Eleven Solrød Strand","addr":"Janesvej 9"}]},{"time":"09:00-11:00","shops":[{"name":"Tips Kiosken Glostrup","addr":"Diget 42"},{"name":"Elite Købmand Glostrup","addr":"Glentevej 1"},{"name":"Kvickly Brøndby","addr":"Nygårds Plads29"},{"name":"SuperBrugsen Brøndby","addr":"Søndre Ringvej 45A 2605"},{"name":"DSB 7-Eleven","addr":"Høje Taastrup Station"},{"name":"Q8 Greve","addr":"Mosede Strandvej 54"}]},{"time":"10:00-12:00","shops":[{"name":"Spar Glostrup","addr":"Dalvangsvej 522"},{"name":"Brøndby Minimarked","addr":"Brøndby Parkvej 4 A"},{"name":"Shell Brøndby Roskildevej","addr":"Roskildevej 453"},{"name":"7-Eleven Albertslund","addr":"Egelundsvej 5"},{"name":"DSB 7-eleven Albertslund Station","addr":"Hedemarksvej 1"},{"name":"Silvan City 2","addr":"Cityringen 18"},{"name":"Telegiganten Tåstrup","addr":"Taastrup Hovedgade 66"},{"name":"Kvickly Taastrup Torv","addr":"Taastrup Torv 18"},{"name":"OK Plus Brøndby Strand","addr":"Gammel Køge Landevej 722"},{"name":"SuperBrugsen Solrød Strand","addr":"Solrød Center 23"},{"name":"SuperBrugsen Karlslunde","addr":"Møllevej 10"}]},{"time":"11:00-13:00","shops":[{"name":"Desi Bazar","addr":"Banegårdsvej 114A"},{"name":"SGJ Packaging","addr":"Herstedvang 7A"},{"name":"Center Kiosken","addr":"Brøndby Strand Centrum 32"},{"name":"Elite Supermarked, Pizza & frisør","addr":"Hallingparken 3 C"}]},{"time":"12:00-14:00","shops":[{"name":"Elite Købmand Albertslund","addr":"Kanalens Kvarter 132"}]},{"time":"13:00-15:00","shops":[{"name":"Sukkerland","addr":"Hovedvejen 158"}]}],"collection":[{"time":"07:00-09:00","stops":[{"zip":"2467","name":"Q8 Ishøj StationsvejIshøj Stationsvej 82635","addr":""},{"zip":"2468","name":"OK PlusSolrød Strandvej 154DK-2680","addr":""},{"zip":"2468","name":"SuperBrugsen Solrød StrandSolrød Center 232680","addr":""}]},{"time":"08:00-10:00","stops":[{"zip":"2450","name":"Kirkebjergkiosken","addr":"Park Alle 288DK-2605"},{"zip":"2453","name":"Spar Ejby","addr":"Ejby Mosevej 7 DK-2600"},{"zip":"2459","name":"Galgebakkens Købmand","addr":"Galgebakken Torv 10DK-2620"},{"zip":"2460","name":"Kvickly Albertslund","addr":"Statiosporten 8DK-2620"},{"zip":"2461","name":"Q8 Taastrup","addr":"Taastrup Hovedgade 108BDK-2630"},{"zip":"2466","name":"DSB 7-Eleven Ishøj Station","addr":"Vejlebrovej 35DK-2635"},{"zip":"2469","name":"Superbrugsen VallensbækVallensbæk Stationstorv 80DK-2665","addr":""},{"zip":"2450","name":"Kvickly Brøndby","addr":"Nygårds Plads 29DK-2605"}]},{"time":"09:00-11:00","stops":[{"zip":"2457","name":"SuperBrugsen BrøndbySøndre Ringvej 45ADK-2605","addr":""},{"zip":"2464","name":"DSB 7-Eleven Høje Taastrup Station Banestrøget 1DK-2630","addr":""},{"zip":"2473","name":"Silvan Greve","addr":"Ventrupparken 18DK-2670"},{"zip":"2474","name":"Q8 GreveMosede Strandvej 54DK-2670","addr":""}]},{"time":"10:00-12:00","stops":[{"zip":"2452","name":"Spar Glostrup","addr":"Dalvangsvej 52DK-2600"},{"zip":"2454","name":"Brøndby Minimarked","addr":"Brøndby Parkvej 4 ADK-2605"},{"zip":"2454","name":"Shell Brøndby Roskildevej","addr":"Roskildevej 453DK-2605"},{"zip":"2458","name":"OK Plus Brøndby StrandGammel Køge Landevej 722DK-2660","addr":""},{"zip":"2461","name":"Telegiganten ApS - PSTaastrup Hovedgade 66DK-2630","addr":""},{"zip":"2471","name":"SuperBrugsen Karlslunde","addr":"Møllevej 10DK-2690"},{"zip":"2476","name":"DSB 7-Eleven Albertslund StationHedemarksvej 1DK-2620","addr":""}]},{"time":"11:00-13:00","stops":[{"zip":"2452","name":"Desi Bazar","addr":"Banegårdsvej 114 ADK-2600"},{"zip":"2458","name":"Centerkiosken","addr":"Brøndby Strand Centrum 32DK-2660"},{"zip":"2459","name":"SGJ Packaging","addr":"Herstedvang 7ADK-2620"}]},{"time":"12:00-14:00","stops":[{"zip":"2460","name":"Elite Købmand AlbertslundKanalens Kvt 132DK-2620","addr":""}]},{"time":"13:00-15:00","stops":[{"zip":"2452","name":"Sukkerland","addr":"Hovedvejen 158DK-2600"},{"zip":"2453","name":"Elite Købmand GlostrupGlentevej 1DK-2600","addr":""}]},{"time":"14:00-16:00","stops":[{"zip":"2460","name":"7-Eleven Albertslund","addr":"Egelundsvej 5BDK-2620"},{"zip":"2451","name":"Tips Kiosken","addr":"Diget 42DK-2600"},{"zip":"2456","name":"Ok PlusJydekrogen 1DK-2625","addr":""},{"zip":"2458","name":"Elite Købmand Brøndby St Hallingparken 3 CDK-2660","addr":""},{"zip":"2462","name":"Kvickly TaastrupTaastrup Torv 18DK-2630","addr":""},{"zip":"2466","name":"Min Købmand Ishøj","addr":"Strandgården 13BDK-2635"},{"zip":"2470","name":"7-Eleven Solrød Strand","addr":"Janesvej 9DK-2680"},{"zip":"2471","name":"Meny Karlslunde","addr":"Karlslunde Parkvej 7DK-2690"},{"zip":"2472","name":"Kioskland","addr":"Greve Midtby Center 14BDK-2670"},{"zip":"2474","name":"GLS Pakkeshop WavesOver Bølgen 10 st 19cDK-2670","addr":""}]},{"time":"17:00-18:30","stops":[{"zip":"2464","name":"Silvan City 2","addr":"Cityringen 18DK-2630"}]}]}
+;
+const LINKS_BASE = [
+  {icon:'🗺️',name:'GLS Map',desc:'Rutekort og overblik',url:'https://apps.gls.dk',cred:'Username: 208500xxxx'},
+  {icon:'📨',name:'Leverings Status',desc:'dp.gls.dk',url:'https://dp.gls.dk',cred:'Username: 4227 / PW: 2626'},
+  {icon:'📦',name:'Pakke Info / Billeder',desc:'Foto af pakker',url:'https://tbox.gls.dk/package-info'},
+  {icon:'🟩',name:'VUB Kort Bestilling',desc:'bat2.fstyr.dk',url:'https://bat2.fstyr.dk/#/'},
+  {icon:'🎓',name:'Varebil Efteruddannelse',desc:'Dekra kursus',url:'https://www.dekra.dk/kursus-katalog?categoryId=57&areaId=3&courseId=1444'},
+  {icon:'🔗',name:'Tilknytning af tilladelse',desc:'virk.dk / fstyr',url:'https://virk.dk/myndigheder/stat/fstyr/selvbetjening/Registrering_af_varebil_til_tilladelse/'},
+  {icon:'📝',name:'Ansøg varebilstilladelse',desc:'Første gangs ansøgning',url:'https://virk.dk/myndigheder/stat/fstyr/selvbetjening/Ansoegning_om_varebilstilladelser_foerstegangs_ansoegning/'},
+  {icon:'😀',name:'Registrering for fødevarer',desc:'virk.dk / FVST',url:'https://virk.dk/myndigheder/stat/FVST/selvbetjening/Opstart_af_foedevarevirksomhed/'},
+  {icon:'🦴',name:'Registrering for foder',desc:'virk.dk / FVST',url:'https://virk.dk/myndigheder/stat/FVST/selvbetjening/Opstart_eller_aendre_fodervirksomhed/'},
+  {icon:'📗',name:'Chaufførhåndbog',desc:'Google Drive PDF',url:'https://drive.google.com/file/d/1LO2XhaWwRr4PjTaUD1NY65MpKe6DOePR/view?usp=drive_link'},
+  {icon:'💪',name:'Ergonomi – Bevar Ryggen',desc:'Sikker løfteteknik',url:'https://www.bevarryggen.dk/lager/pakker-og-gods/'},
+  {icon:'📩',name:'Deposit vejledning',desc:'Jumpshare video',url:'https://jmp.sh/CZBTHO4b'},
+  {icon:'📦',name:'FM-Fuldmagt',desc:'Jumpshare vejledning',url:'https://jmp.sh/EYbCBCRZ'},
+  {icon:'📮',name:'Alt. levering – Postkasse ✅',desc:'Med postkasse',url:'https://jumpshare.com/s/Q91h7n3QLLqI9Af2E3zB'},
+  {icon:'🔒',name:'Alt. levering – Ingen postkasse ❌',desc:'Uden postkasse',url:'https://jmp.sh/hBxajBMs'},
+  {icon:'🧾',name:'EFM vejledning',desc:'Jumpshare',url:'https://jmp.sh/X0xykZUS'},
+  {icon:'📊',name:'Mandags Kvalitet',desc:'Dropbox Excel',url:'https://www.dropbox.com/scl/fi/yozhryd3tducqhoip7psx/Mandag-Kvalitet.xlsx?rlkey=0c9yd56wgnxw89rhf5daapp6h&st=ud7lm8rm&dl=0'},
+];
+
+// ── LIVE DATA (from localStorage if admin has edited) ─────────────────
+const DATA_KEY = 'pilot_data_v1';
+const LINKS_KEY = 'pilot_links_v1';
+
+function getData() {
+  try { return JSON.parse(localStorage.getItem(DATA_KEY)) || D_BASE; } catch { return D_BASE; }
+}
+function getLinks() {
+  try { return JSON.parse(localStorage.getItem(LINKS_KEY)) || LINKS_BASE; } catch { return LINKS_BASE; }
+}
+function saveData(d) { localStorage.setItem(DATA_KEY, JSON.stringify(d)); }
+function saveLinks(l) { localStorage.setItem(LINKS_KEY, JSON.stringify(l)); }
+
+// Always use live D/LINKS
+let D = getData();
+let LINKS = getLinks();
+
+// ── CUSTOM ITEMS (localStorage) ────────────────────────────────────────
+const STORE_KEY='pilot_hjaelp_custom_v1';
+function getCustom(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||'[]');}catch{return[];}}
+function saveCustom(items){localStorage.setItem(STORE_KEY,JSON.stringify(items));}
+
+// ── STATE ──────────────────────────────────────────────────────────────
+let hist=[], curView='home', curData=null;
+let deferredPrompt=null, installDismissed=false;
+
+// ── PWA / INSTALL ──────────────────────────────────────────────────────
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredPrompt=e;
+  if(!installDismissed && !window.matchMedia('(display-mode: standalone)').matches)
+    showInstallBanner();
+});
+window.addEventListener('appinstalled',()=>{ hideInstallBanner(); });
+
+function showInstallBanner(){
+  document.getElementById('installBanner').classList.remove('hidden');
+  document.getElementById('fab').classList.add('with-banner');
+}
+function hideInstallBanner(){
+  document.getElementById('installBanner').classList.add('hidden');
+  document.getElementById('fab').classList.remove('with-banner');
+}
+function dismissInstall(){
+  installDismissed=true; hideInstallBanner();
+  localStorage.setItem('pilot_install_dismissed','1');
+}
+async function doInstall(){
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  const r=await deferredPrompt.userChoice;
+  deferredPrompt=null;
+  if(r.outcome==='accepted') hideInstallBanner();
+}
+if(localStorage.getItem('pilot_install_dismissed')) installDismissed=true;
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+const isSafari=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+if(isIOS && isSafari && !isStandalone && !installDismissed){
+  setTimeout(()=>{
+    document.getElementById('installBanner').classList.remove('hidden');
+    document.getElementById('installBanner').querySelector('.install-text').innerHTML=
+      'Installer Pilot-Hjælp<small>Tryk Del → "Føj til hjemmeskærm"</small>';
+    document.getElementById('installBtn').style.display='none';
+    document.getElementById('fab').classList.add('with-banner');
+  },1500);
+}
+
+// ── ADMIN LOGIN ────────────────────────────────────────────────────────
+function openModal(){
+  if(!isAdmin){
+    showLoginModal();
+  } else {
+    showAdminPanel();
+  }
+}
+function showLoginModal(){
+  document.getElementById('modalBg').classList.remove('hidden');
+  document.getElementById('loginView').classList.remove('hidden');
+  document.getElementById('adminPanelView').classList.add('hidden');
+  document.getElementById('modal-title-text').textContent='🔐 Admin Login';
+  setTimeout(()=>document.getElementById('admin-pw').focus(),100);
+}
+function doLogin(){
+  const pw=document.getElementById('admin-pw').value;
+  if(pw===ADMIN_PASSWORD){
+    isAdmin=true;
+    document.getElementById('fab').textContent='🔓';
+    showAdminPanel();
+  } else {
+    document.getElementById('login-err').textContent='Forkert kode. Prøv igen.';
+    document.getElementById('admin-pw').value='';
+  }
+}
+function doLogout(){
+  isAdmin=false;
+  document.getElementById('fab').textContent='⚙️';
+  closeModal(null);
+}
+function showAdminPanel(){
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('adminPanelView').classList.remove('hidden');
+  document.getElementById('modal-title-text').textContent='⚙️ Admin Panel';
+  renderAdminTabs();
+  showAdminTab('custom');
+}
+function closeModal(e){
+  if(e===null||e.target===document.getElementById('modalBg'))
+    document.getElementById('modalBg').classList.add('hidden');
+}
+
+// ── ADMIN TABS ─────────────────────────────────────────────────────────
+function renderAdminTabs(){
+  const tabs=[
+    {id:'custom',label:'Mine menuer'},
+    {id:'pakkeshop',label:'Pakkeshop'},
+    {id:'afhentning',label:'Afhentning'},
+    {id:'collection',label:'Collection'},
+    {id:'levkontrol',label:'Lev. Kontrol'},
+    {id:'saturday',label:'Lørdag'},
+    {id:'links',label:'Links'},
+    {id:'delivery',label:'Delivery'},
+  ];
+  document.getElementById('adminTabs').innerHTML=tabs.map(t=>
+    `<button class="atab" id="atab-${t.id}" onclick="showAdminTab('${t.id}')">${t.label}</button>`
+  ).join('');
+}
+function showAdminTab(tab){
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById('atab-'+tab);
+  if(el) el.classList.add('active');
+  const body=document.getElementById('adminBody');
+  if(tab==='custom') body.innerHTML=renderAdminCustom();
+  else if(tab==='pakkeshop') body.innerHTML=renderAdminPakkeshop();
+  else if(tab==='afhentning') body.innerHTML=renderAdminAfhentning();
+  else if(tab==='collection') body.innerHTML=renderAdminCollection();
+  else if(tab==='levkontrol') body.innerHTML=renderAdminLevKontrol();
+  else if(tab==='saturday') body.innerHTML=renderAdminSaturday();
+  else if(tab==='links') body.innerHTML=renderAdminLinks();
+  else if(tab==='delivery') body.innerHTML=renderAdminDelivery();
+}
+
+// ── ADMIN: CUSTOM MENU ─────────────────────────────────────────────────
+function renderAdminCustom(){
+  const items=getCustom();
+  let html=`
+<div class="form-group"><label class="form-label">Ikon (emoji)</label><input class="form-input" id="f-icon" placeholder="🚛" maxlength="4"></div>
+<div class="form-group"><label class="form-label">Titel</label><input class="form-input" id="f-title" placeholder="f.eks. Specialkunder"></div>
+<div class="form-group"><label class="form-label">Beskrivelse</label><input class="form-input" id="f-desc" placeholder="f.eks. 3 kunder"></div>
+<div class="form-group"><label class="form-label">Type</label>
+<select class="form-select" id="f-type" onchange="toggleTypeFields()">
+<option value="link">🔗 Link / URL</option><option value="text">📝 Tekst</option><option value="list">📋 Liste</option>
+</select></div>
+<div id="field-link" class="form-group"><label class="form-label">URL</label><input class="form-input" id="f-url" type="url" placeholder="https://..."></div>
+<div id="field-text" class="form-group hidden"><label class="form-label">Indhold</label><textarea class="form-textarea" id="f-text"></textarea></div>
+<div id="field-list" class="form-group hidden"><label class="form-label">Underpunkter (Ikon Titel | Beskrivelse | URL)</label><textarea class="form-textarea" id="f-items" placeholder="🏢 Firma | Adresse | https://..."></textarea></div>
+<button class="btn-primary" onclick="saveCustomItem()">➕ Tilføj til menu</button>`;
+  if(items.length){
+    html+=`<div style="margin-top:20px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px">Eksisterende punkter</div>`;
+    items.forEach((item,i)=>{
+      html+=`<div class="custom-item"><div class="custom-item-body"><div class="custom-item-name">${item.icon} ${item.title}</div><div class="custom-item-sub">${item.type==='link'?item.url:item.type==='list'?`${(item.items||[]).length} underpunkter`:item.content||''}</div></div>
+<button class="btn-danger" onclick="deleteCustomItem(${i})">Slet</button></div>`;
+    });
+  }
+  return html;
+}
+function toggleTypeFields(){
+  const t=document.getElementById('f-type').value;
+  document.getElementById('field-link').classList.toggle('hidden',t!=='link');
+  document.getElementById('field-text').classList.toggle('hidden',t!=='text');
+  document.getElementById('field-list').classList.toggle('hidden',t!=='list');
+}
+function saveCustomItem(){
+  const icon=document.getElementById('f-icon').value.trim()||'📋';
+  const title=document.getElementById('f-title').value.trim();
+  const desc=document.getElementById('f-desc').value.trim();
+  const type=document.getElementById('f-type').value;
+  if(!title){alert('Titel mangler');return;}
+  const item={icon,title,desc,type};
+  if(type==='link') item.url=document.getElementById('f-url').value.trim();
+  else if(type==='text') item.content=document.getElementById('f-text').value.trim();
+  else if(type==='list'){
+    item.items=document.getElementById('f-items').value.split('\n').filter(Boolean).map(line=>{
+      const parts=line.split('|').map(s=>s.trim());
+      const first=parts[0]||'';
+      const emojiMatch=first.match(/^(\p{Emoji}\s*)/u);
+      const emoji=emojiMatch?emojiMatch[1].trim():'🔹';
+      const name=emojiMatch?first.slice(emojiMatch[0].length).trim():first;
+      return{icon:emoji,title:name,desc:parts[1]||'',url:parts[2]||''};
+    });
+  }
+  const items=getCustom();items.push(item);saveCustom(items);
+  render('home',null,'');
+  showAdminTab('custom');
+  alert('✅ Tilføjet');
+}
+function deleteCustomItem(i){
+  if(!confirm('Slet dette punkt?'))return;
+  const items=getCustom();items.splice(i,1);saveCustom(items);
+  render('home',null,'');
+  showAdminTab('custom');
+}
+
+// ── ADMIN: PAKKESHOP ───────────────────────────────────────────────────
+function renderAdminPakkeshop(){
+  const d=getData();
+  let html=`<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Rediger pakkeshop tider. Klik på en butik for at redigere.</div>`;
+  for(const area of Object.keys(d.pakkeshop)){
+    html+=`<div style="margin-bottom:8px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:6px 0 4px;border-top:1px solid var(--border)">${area}</div>`;
+    d.pakkeshop[area].forEach((s,si)=>{
+      html+=`<div class="custom-item" style="margin-bottom:5px"><div class="custom-item-body"><div class="custom-item-name">${s.name}</div><div class="custom-item-sub">Hverdag: ${s.hverdag||'–'} · Lørdag: ${s.lørdag||'–'}</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editPS('${encodeURIComponent(area)}','${si}')">Rediger</button>
+<button class="btn-danger" onclick="deletePS('${encodeURIComponent(area)}','${si}')">Slet</button></div>`;
+    });
+    html+=`<button class="btn-primary" style="margin-top:4px;margin-bottom:8px" onclick="addPS('${encodeURIComponent(area)}')">➕ Tilføj butik i ${area}</button>`;
+    html+=`</div>`;
+  }
+  html+=`<div style="border-top:2px solid var(--border);margin-top:12px;padding-top:12px"><button class="btn-primary" onclick="addPSArea()">➕ Nyt område</button></div>`;
+  return html;
+}
+function editPS(areaEnc,si){
+  const area=decodeURIComponent(areaEnc);
+  const d=getData();
+  const s=d.pakkeshop[area][si];
+  const name=prompt('Butiksnavn:',s.name);if(name===null)return;
+  const hverdag=prompt('Hverdag tid (f.eks. 08:00–10:00, tom=ingen):',s.hverdag||'');
+  const lordag=prompt('Lørdag tid (tom=ingen):',s.lørdag||'');
+  const afhentning=prompt('Afhentning tid (tom=ingen):',s.afhentning||'');
+  d.pakkeshop[area][si]={name:name.trim(),hverdag:hverdag.trim()||null,lørdag:lordag.trim()||null,afhentning:afhentning.trim()||null};
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('pakkeshop');
+}
+function deletePS(areaEnc,si){
+  if(!confirm('Slet butik?'))return;
+  const area=decodeURIComponent(areaEnc);
+  const d=getData();
+  d.pakkeshop[area].splice(si,1);
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('pakkeshop');
+}
+function addPS(areaEnc){
+  const area=decodeURIComponent(areaEnc);
+  const name=prompt('Butiksnavn:');if(!name)return;
+  const hverdag=prompt('Hverdag tid (f.eks. 08:00–10:00):');
+  const lordag=prompt('Lørdag tid:');
+  const afhentning=prompt('Afhentning tid:');
+  const d=getData();
+  d.pakkeshop[area].push({name:name.trim(),hverdag:hverdag.trim()||null,lørdag:lordag.trim()||null,afhentning:afhentning.trim()||null});
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('pakkeshop');
+}
+function addPSArea(){
+  const area=prompt('Nyt område (f.eks. 2700 Brønshøj):');if(!area)return;
+  const d=getData();
+  d.pakkeshop[area]=[];
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('pakkeshop');
+}
+
+// ── ADMIN: AFHENTNING ──────────────────────────────────────────────────
+function renderAdminAfhentning(){
+  const d=getData();
+  let html=`<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Rediger afhentningsstop per rute.</div>`;
+  for(const zip of Object.keys(d.afhentning).sort()){
+    const stops=d.afhentning[zip];
+    html+=`<div style="margin-bottom:6px;border-top:1px solid var(--border);padding-top:8px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px">Rute ${zip} (${stops.length} stop)</div>`;
+    stops.forEach((s,si)=>{
+      html+=`<div class="custom-item" style="margin-bottom:4px"><div class="custom-item-body"><div class="custom-item-name">${s.name}</div><div class="custom-item-sub">${s.addr} · ${s.time} · ${s.type}</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editAfh('${zip}','${si}')">✏️</button>
+<button class="btn-danger" onclick="deleteAfh('${zip}','${si}')">🗑</button></div>`;
+    });
+    html+=`<button class="btn-primary" style="margin-top:4px;font-size:11px;padding:7px" onclick="addAfh('${zip}')">➕ Stop</button></div>`;
+  }
+  html+=`<div style="border-top:2px solid var(--border);margin-top:12px;padding-top:12px"><button class="btn-primary" onclick="addAfhZip()">➕ Ny rute</button></div>`;
+  return html;
+}
+function editAfh(zip,si){
+  const d=getData();
+  const s=d.afhentning[zip][si];
+  const name=prompt('Navn:',s.name);if(name===null)return;
+  const addr=prompt('Adresse:',s.addr);if(addr===null)return;
+  const time=prompt('Tid (f.eks. 14:00-15:00):',s.time);if(time===null)return;
+  const type=prompt('Type (Fast/Ringer/Speciel):',s.type);if(type===null)return;
+  d.afhentning[zip][si]={type:type.trim(),zip,name:name.trim(),addr:addr.trim(),time:time.trim()};
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('afhentning');
+}
+function deleteAfh(zip,si){
+  if(!confirm('Slet stop?'))return;
+  const d=getData();
+  d.afhentning[zip].splice(si,1);
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('afhentning');
+}
+function addAfh(zip){
+  const name=prompt('Navn:');if(!name)return;
+  const addr=prompt('Adresse:');if(!addr)return;
+  const time=prompt('Tid (f.eks. 14:00-15:00):');if(!time)return;
+  const type=prompt('Type (Fast/Ringer/Speciel):','Fast');if(!type)return;
+  const d=getData();
+  d.afhentning[zip].push({type:type.trim(),zip,name:name.trim(),addr:addr.trim(),time:time.trim()});
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('afhentning');
+}
+function addAfhZip(){
+  const zip=prompt('Rute-nr (f.eks. 2476):');if(!zip)return;
+  const d=getData();
+  d.afhentning[zip]=[];
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('afhentning');
+}
+
+// ── ADMIN: COLLECTION ──────────────────────────────────────────────────
+function renderAdminCollection(){
+  const d=getData();
+  let html=`<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Rediger collection tidsslots.</div>`;
+  d.collection.forEach((slot,ci)=>{
+    html+=`<div style="border-top:1px solid var(--border);padding-top:8px;margin-bottom:6px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+<span class="route-time">${slot.time}</span>
+<span style="font-size:12px;color:var(--muted)">${slot.stops.length} stop</span>
+<button class="btn-danger" style="margin-left:auto" onclick="deleteColSlot(${ci})">Slet slot</button></div>`;
+    slot.stops.forEach((s,si)=>{
+      html+=`<div class="custom-item" style="margin-bottom:4px"><div class="custom-item-body"><div class="custom-item-name">${s.zip} – ${s.name.split(/DK-/)[0].trim()}</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editColStop(${ci},${si})">✏️</button>
+<button class="btn-danger" onclick="deleteColStop(${ci},${si})">🗑</button></div>`;
+    });
+    html+=`<button class="btn-primary" style="margin-top:4px;font-size:11px;padding:7px" onclick="addColStop(${ci})">➕ Stop</button></div>`;
+  });
+  html+=`<div style="border-top:2px solid var(--border);margin-top:12px;padding-top:12px"><button class="btn-primary" onclick="addColSlot()">➕ Nyt tidsslot</button></div>`;
+  return html;
+}
+function editColStop(ci,si){
+  const d=getData();
+  const s=d.collection[ci].stops[si];
+  const zip=prompt('ZIP:',s.zip);if(zip===null)return;
+  const name=prompt('Navn:',s.name);if(name===null)return;
+  const addr=prompt('Adresse:',s.addr);if(addr===null)return;
+  d.collection[ci].stops[si]={zip:zip.trim(),name:name.trim(),addr:addr.trim()};
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('collection');
+}
+function deleteColStop(ci,si){
+  if(!confirm('Slet stop?'))return;
+  const d=getData();
+  d.collection[ci].stops.splice(si,1);
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('collection');
+}
+function addColStop(ci){
+  const zip=prompt('ZIP:');if(!zip)return;
+  const name=prompt('Navn:');if(!name)return;
+  const addr=prompt('Adresse:','');
+  const d=getData();
+  d.collection[ci].stops.push({zip:zip.trim(),name:name.trim(),addr:addr||''});
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('collection');
+}
+function deleteColSlot(ci){
+  if(!confirm('Slet hele tidsslot?'))return;
+  const d=getData();
+  d.collection.splice(ci,1);
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('collection');
+}
+function addColSlot(){
+  const time=prompt('Tid (f.eks. 15:00-17:00):');if(!time)return;
+  const d=getData();
+  d.collection.push({time:time.trim(),stops:[]});
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('collection');
+}
+
+// ── ADMIN: LEV KONTROL ────────────────────────────────────────────────
+function renderAdminLevKontrol(){
+  const d=getData();
+  let html=`<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Rediger leveringskontrol tider.</div>`;
+  d.lev_kontrol.forEach((slot,li)=>{
+    html+=`<div style="border-top:1px solid var(--border);padding-top:8px;margin-bottom:6px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+<span class="route-time">${slot.time}</span>
+<button class="btn-danger" style="margin-left:auto" onclick="deleteLevSlot(${li})">Slet slot</button></div>`;
+    slot.shops.forEach((s,si)=>{
+      html+=`<div class="custom-item" style="margin-bottom:4px"><div class="custom-item-body"><div class="custom-item-name">${s.name}</div><div class="custom-item-sub">${s.addr}</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editLevShop(${li},${si})">✏️</button>
+<button class="btn-danger" onclick="deleteLevShop(${li},${si})">🗑</button></div>`;
+    });
+    html+=`<button class="btn-primary" style="margin-top:4px;font-size:11px;padding:7px" onclick="addLevShop(${li})">➕ Butik</button></div>`;
+  });
+  html+=`<div style="border-top:2px solid var(--border);margin-top:12px;padding-top:12px"><button class="btn-primary" onclick="addLevSlot()">➕ Nyt tidsslot</button></div>`;
+  return html;
+}
+function editLevShop(li,si){
+  const d=getData();
+  const s=d.lev_kontrol[li].shops[si];
+  const name=prompt('Navn:',s.name);if(name===null)return;
+  const addr=prompt('Adresse:',s.addr);if(addr===null)return;
+  d.lev_kontrol[li].shops[si]={name:name.trim(),addr:addr.trim()};
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('levkontrol');
+}
+function deleteLevShop(li,si){
+  if(!confirm('Slet butik?'))return;
+  const d=getData();
+  d.lev_kontrol[li].shops.splice(si,1);
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('levkontrol');
+}
+function addLevShop(li){
+  const name=prompt('Navn:');if(!name)return;
+  const addr=prompt('Adresse:');if(!addr)return;
+  const d=getData();
+  d.lev_kontrol[li].shops.push({name:name.trim(),addr:addr.trim()});
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('levkontrol');
+}
+function deleteLevSlot(li){
+  if(!confirm('Slet hele tidsslot?'))return;
+  const d=getData();
+  d.lev_kontrol.splice(li,1);
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('levkontrol');
+}
+function addLevSlot(){
+  const time=prompt('Tid (f.eks. 14:00-16:00):');if(!time)return;
+  const d=getData();
+  d.lev_kontrol.push({time:time.trim(),shops:[]});
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('levkontrol');
+}
+
+// ── ADMIN: SATURDAY ────────────────────────────────────────────────────
+function renderAdminSaturday(){
+  const d=getData();
+  let html=`<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Rediger lørdagsture.</div>`;
+  d.saturday.forEach((tur,ti)=>{
+    html+=`<div style="border-top:1px solid var(--border);padding-top:8px;margin-bottom:6px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+<b style="font-size:13px">${tur.label}</b>
+<button class="btn-primary" style="width:auto;margin:0;padding:5px 9px;font-size:11px" onclick="editSatLabel(${ti})">✏️ Titel</button>
+<button class="btn-danger" onclick="deleteSatTur(${ti})">Slet tur</button></div>`;
+    tur.stops.forEach((s,si)=>{
+      html+=`<div class="custom-item" style="margin-bottom:4px"><div class="custom-item-body"><div class="custom-item-name">#${s.num} ${s.name}</div><div class="custom-item-sub">${s.time} · Port ${s.port}</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editSatStop(${ti},${si})">✏️</button>
+<button class="btn-danger" onclick="deleteSatStop(${ti},${si})">🗑</button></div>`;
+    });
+    html+=`<button class="btn-primary" style="margin-top:4px;font-size:11px;padding:7px" onclick="addSatStop(${ti})">➕ Stop</button></div>`;
+  });
+  html+=`<div style="border-top:2px solid var(--border);margin-top:12px;padding-top:12px"><button class="btn-primary" onclick="addSatTur()">➕ Ny tur</button></div>`;
+  return html;
+}
+function editSatLabel(ti){
+  const d=getData();
+  const label=prompt('Tur titel:',d.saturday[ti].label);if(label===null)return;
+  d.saturday[ti].label=label.trim();
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('saturday');
+}
+function editSatStop(ti,si){
+  const d=getData();
+  const s=d.saturday[ti].stops[si];
+  const num=prompt('Stop nummer:',s.num);if(num===null)return;
+  const name=prompt('Navn:',s.name);if(name===null)return;
+  const time=prompt('Tid:',s.time);if(time===null)return;
+  const port=prompt('Port:',s.port);if(port===null)return;
+  d.saturday[ti].stops[si]={num:parseInt(num)||s.num,name:name.trim(),time:time.trim(),port:port.trim()};
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('saturday');
+}
+function deleteSatStop(ti,si){
+  if(!confirm('Slet stop?'))return;
+  const d=getData();
+  d.saturday[ti].stops.splice(si,1);
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('saturday');
+}
+function addSatStop(ti){
+  const num=prompt('Stop nummer:');if(!num)return;
+  const name=prompt('Navn:');if(!name)return;
+  const time=prompt('Tid:');if(!time)return;
+  const port=prompt('Port:');if(!port)return;
+  const d=getData();
+  d.saturday[ti].stops.push({num:parseInt(num),name:name.trim(),time:time.trim(),port:port.trim()});
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('saturday');
+}
+function deleteSatTur(ti){
+  if(!confirm('Slet hele tur?'))return;
+  const d=getData();
+  d.saturday.splice(ti,1);
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('saturday');
+}
+function addSatTur(){
+  const label=prompt('Tur titel (f.eks. Tur 5 - 2700):');if(!label)return;
+  const d=getData();
+  d.saturday.push({label:label.trim(),stops:[]});
+  saveData(d); D=getData(); render(curView,curData); showAdminTab('saturday');
+}
+
+// ── ADMIN: LINKS ───────────────────────────────────────────────────────
+function renderAdminLinks(){
+  let links=getLinks();
+  let html=`<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Rediger links og ressourcer.</div>`;
+  links.forEach((l,li)=>{
+    html+=`<div class="custom-item" style="margin-bottom:5px"><div class="custom-item-body"><div class="custom-item-name">${l.icon} ${l.name}</div><div class="custom-item-sub">${l.url}</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editLink(${li})">✏️</button>
+<button class="btn-danger" onclick="deleteLink(${li})">🗑</button></div>`;
+  });
+  html+=`<div style="margin-top:12px"><button class="btn-primary" onclick="addLink()">➕ Nyt link</button></div>`;
+  return html;
+}
+function editLink(li){
+  let links=getLinks();
+  const l=links[li];
+  const icon=prompt('Ikon:',l.icon);if(icon===null)return;
+  const name=prompt('Navn:',l.name);if(name===null)return;
+  const desc=prompt('Beskrivelse:',l.desc);if(desc===null)return;
+  const url=prompt('URL:',l.url);if(url===null)return;
+  const cred=prompt('Login info (valgfri):',l.cred||'');
+  links[li]={icon:icon.trim(),name:name.trim(),desc:desc.trim(),url:url.trim(),cred:cred.trim()||undefined};
+  saveLinks(links); LINKS=getLinks(); render(curView,curData); showAdminTab('links');
+}
+function deleteLink(li){
+  if(!confirm('Slet link?'))return;
+  let links=getLinks();
+  links.splice(li,1);
+  saveLinks(links); LINKS=getLinks(); render(curView,curData); showAdminTab('links');
+}
+function addLink(){
+  const icon=prompt('Ikon:','🔗');if(!icon)return;
+  const name=prompt('Navn:');if(!name)return;
+  const desc=prompt('Beskrivelse:');if(!desc)return;
+  const url=prompt('URL:');if(!url)return;
+  const cred=prompt('Login info (valgfri):','');
+  let links=getLinks();
+  links.push({icon:icon.trim(),name:name.trim(),desc:desc.trim(),url:url.trim(),cred:cred.trim()||undefined});
+  saveLinks(links); LINKS=getLinks(); render(curView,curData); showAdminTab('links');
+}
+
+// ── ADMIN: DELIVERY ────────────────────────────────────────────────────
+function renderAdminDelivery(){
+  return`<div style="font-size:12px;color:var(--muted);margin-bottom:16px">Delivery-menuen viser faste videolinks. Rediger dem her.</div>
+<div class="custom-item" style="margin-bottom:8px"><div class="custom-item-body"><div class="custom-item-name">📩 Deposit</div><div class="custom-item-sub">https://jmp.sh/CZBTHO4b</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editDeliveryLink('deposit','Deposit','https://jmp.sh/CZBTHO4b')">✏️</button></div>
+<div class="custom-item" style="margin-bottom:8px"><div class="custom-item-body"><div class="custom-item-name">📦 FM-Fuldmagt</div><div class="custom-item-sub">https://jmp.sh/EYbCBCRZ</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editDeliveryLink('fm','FM-Fuldmagt','https://jmp.sh/EYbCBCRZ')">✏️</button></div>
+<div class="custom-item" style="margin-bottom:8px"><div class="custom-item-body"><div class="custom-item-name">🧾 EFM</div><div class="custom-item-sub">https://jmp.sh/X0xykZUS</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editDeliveryLink('efm','EFM','https://jmp.sh/X0xykZUS')">✏️</button></div>
+<div class="custom-item" style="margin-bottom:8px"><div class="custom-item-body"><div class="custom-item-name">📮 Med postkasse</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editDeliveryLink('mk','Med postkasse','https://jumpshare.com/s/Q91h7n3QLLqI9Af2E3zB')">✏️</button></div>
+<div class="custom-item"><div class="custom-item-body"><div class="custom-item-name">🔒 Ingen postkasse</div></div>
+<button class="btn-primary" style="width:auto;margin:0;padding:6px 10px;font-size:11px" onclick="editDeliveryLink('ik','Ingen postkasse','https://jmp.sh/hBxajBMs')">✏️</button></div>`;
+}
+function editDeliveryLink(key,label,currentUrl){
+  const stored=JSON.parse(localStorage.getItem('pilot_delivery_links_v1')||'{}');
+  const url=prompt(`URL for "${label}":`,stored[key]||currentUrl);
+  if(url===null)return;
+  stored[key]=url.trim();
+  localStorage.setItem('pilot_delivery_links_v1',JSON.stringify(stored));
+  alert('✅ Gemt');
+}
+function getDeliveryUrl(key,fallback){
+  try{const s=JSON.parse(localStorage.getItem('pilot_delivery_links_v1')||'{}');return s[key]||fallback;}catch{return fallback;}
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────
+function nav(view,data,label){
+  hist.push({view:curView,data:curData,label:document.getElementById('topTitle').textContent});
+  curView=view; curData=data;
+  document.getElementById('searchInput').value='';
+  render(view,data,label); updateNav(label); window.scrollTo(0,0);
+}
+function goBack(){
+  if(!hist.length)return;
+  const p=hist.pop(); curView=p.view; curData=p.data;
+  document.getElementById('searchInput').value='';
+  render(p.view,p.data,p.label); updateNav(p.label); window.scrollTo(0,0);
+}
+function updateNav(label){
+  const btn=document.getElementById('backBtn'),t=document.getElementById('topTitle');
+  if(hist.length){btn.classList.add('on');t.textContent=label||'';}
+  else{btn.classList.remove('on');t.textContent='';}
+  renderBC();
+}
+function renderBC(){
+  const bc=document.getElementById('bc');
+  if(!hist.length){bc.innerHTML='';return;}
+  bc.innerHTML=hist.map((h,i)=>`<span class="bc-item" onclick="jumpTo(${i})">${h.label||'Hjem'}</span><span>›</span>`).join('')+`<b>${document.getElementById('topTitle').textContent}</b>`;
+}
+function jumpTo(i){
+  const t=hist[i]; hist=hist.slice(0,i); curView=t.view; curData=t.data;
+  document.getElementById('searchInput').value='';
+  render(t.view,t.data,t.label); updateNav(t.label);
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────
+function render(view,data,label){
+  const m=document.getElementById('main');
+  const map={
+    home:renderHome, pakkeshop:renderPakkeshop, 'ps-area':renderPSArea,
+    collection:renderCollection, 'col-time':renderColTime,
+    'lev-kontrol':renderLevKontrol, 'lev-time':renderLevTime,
+    afhentning:renderAfhentning, 'afh-zip':renderAfhZip,
+    saturday:renderSaturday, 'sat-tur':renderSatTur,
+    delivery:renderDelivery, quality:renderQuality, links:renderLinks,
+    'custom-view':renderCustomView, 'custom-list':renderCustomList,
+  };
+  m.innerHTML=(map[view]||renderHome)(data);
+}
+
+function card(icon,title,sub,onclick,arr,badge){
+  return`<div class="card${arr?' arr':''}" onclick="${onclick}"><div class="ci">${icon}</div><div class="cb"><div class="ct">${title}</div>${sub?`<div class="cs">${sub}</div>`:''}</div>${badge!==undefined?`<div class="badge">${badge}</div>`:''}</div>`;
+}
+
+// ── HOME ───────────────────────────────────────────────────────────────
+function renderHome(){
+  const custom=getCustom();
+  const ps_shops=Object.values(D.pakkeshop).reduce((a,b)=>a+b.length,0);
+  const afh_total=Object.values(D.afhentning).reduce((a,b)=>a+b.length,0);
+  let html=`<div class="sec-lbl">GLS Menu</div><div class="card-grid">
+${card('🏪','Pakkeshop tider',`${ps_shops} butikker · ${Object.keys(D.pakkeshop).length} områder`,"nav('pakkeshop',null,'Pakkeshop')",true)}
+${card('🕐','Pakkeshop Collection',`${D.collection.length} tidsslots`,"nav('collection',null,'Collection')",true)}
+${card('🎯','Pakkeshop lev. kontrol',`${D.lev_kontrol.length} leveringstider`,"nav('lev-kontrol',null,'Lev. Kontrol')",true)}
+${card('📦','Vognudbring. / Delivery','Deposit · FM-Fuldmagt · Alt. levering',"nav('delivery',null,'Delivery')",true)}
+${card('🕜','Afhentning / Pick up',`${Object.keys(D.afhentning).length} ruter · ${afh_total} stop`,"nav('afhentning',null,'Afhentning')",true)}
+${card('📅','LørdagsTur / Saturday',`${D.saturday.length} ture med køreplan`,"nav('saturday',null,'LørdagsTur')",true)}
+${card('🔍','Kvalitet / Quality','Mandags & Torsdags kvalitet',"nav('quality',null,'Kvalitet')",true)}
+${card('🔗','Nyttige Links',`${LINKS.length} links & systemer`,"nav('links',null,'Links')",true)}
+${card('📗','Chaufførhåndbog','Google Drive PDF',"window.open('https://drive.google.com/file/d/1LO2XhaWwRr4PjTaUD1NY65MpKe6DOePR/view?usp=drive_link','_blank')",false)}
+</div>`;
+  if(custom.length){
+    html+=`<div class="sec-lbl" style="margin-top:16px">Mine menuer</div><div class="card-grid">`;
+    custom.forEach((item,i)=>{
+      if(item.type==='list')
+        html+=card(item.icon||'📋',item.title,item.desc||`${(item.items||[]).length} punkter`,`nav('custom-list',${i},'${item.title.replace(/'/g,"\'")}')`  ,true);
+      else if(item.type==='link')
+        html+=card(item.icon||'🔗',item.title,item.desc||item.url,`window.open('${item.url}','_blank')`,false);
+      else
+        html+=card(item.icon||'📝',item.title,item.desc||'',`nav('custom-view',${i},'${item.title.replace(/'/g,"\'")}')`  ,true);
+    });
+    html+=`</div>`;
+  }
+  return html;
+}
+
+// ── PAKKESHOP ──────────────────────────────────────────────────────────
+function renderPakkeshop(){
+  return`<div class="sec-lbl">Vælg område</div><div class="card-grid">${Object.keys(D.pakkeshop).map(a=>{const s=D.pakkeshop[a];return card('📍',a,`${s.length} butikker`,`nav('ps-area','${a}','${a}')`,true);}).join('')}</div>`;
+}
+function renderPSArea(area){
+  const shops=D.pakkeshop[area]||[];
+  return`<div class="sec-lbl">${shops.length} butikker</div>${shops.map(s=>`
+<div class="cc"><div class="ch"><span class="ch-icon">🏪</span><div><div class="ch-title">${s.name}</div></div></div>
+<div class="cb2"><div class="tags">
+${s.hverdag?`<span class="tag tag-h">Hverdag: ${s.hverdag}</span>`:''}
+${s.lørdag?`<span class="tag tag-l">Lørdag: ${s.lørdag}</span>`:''}
+${s.afhentning?`<span class="tag tag-a">Afhentning: ${s.afhentning}</span>`:''}
+${!s.hverdag&&!s.lørdag&&!s.afhentning?'<span style="color:var(--muted);font-size:12px">Ingen tider registreret</span>':''}
+</div></div></div>`).join('')}`;
+}
+
+// ── COLLECTION ─────────────────────────────────────────────────────────
+function renderCollection(){
+  return`<div class="sec-lbl">Vælg tidsslot</div><div class="card-grid">${D.collection.map(c=>card('🕐',c.time,`${c.stops.length} stop`,`nav('col-time','${c.time}','${c.time}')`,true,c.stops.length)).join('')}</div>`;
+}
+function renderColTime(time){
+  const slot=D.collection.find(c=>c.time===time);
+  if(!slot)return'';
+  return`<div class="cc"><div class="ch"><span class="ch-icon">🕐</span><div><div class="ch-title">Collection ${slot.time}</div><div class="ch-sub">${slot.stops.length} stop</div></div></div>
+<div class="cb2">${slot.stops.map(s=>{const name=s.name.split(/DK-/)[0].replace(/\d{4}\s*$/,'').trim();return`<div class="shop-entry"><div class="zip-lbl">${s.zip}</div><div class="sn">${name}</div><div class="sa">${s.addr||''}</div></div>`;}).join('')}</div></div>`;
+}
+
+// ── LEV KONTROL ────────────────────────────────────────────────────────
+function renderLevKontrol(){
+  return`<div class="sec-lbl">Vælg leveringstid</div><div class="card-grid">${D.lev_kontrol.map(l=>card('🎯',l.time,`${l.shops.length} butikker`,`nav('lev-time','${l.time}','Lev. ${l.time}')`,true,l.shops.length)).join('')}</div>`;
+}
+function renderLevTime(time){
+  const slot=D.lev_kontrol.find(l=>l.time===time);
+  if(!slot)return'';
+  return`<div class="cc"><div class="ch"><span class="ch-icon">🎯</span><div><div class="ch-title">Lev. kontrol ${slot.time}</div><div class="ch-sub">${slot.shops.length} butikker</div></div></div>
+<div class="cb2">${slot.shops.map(s=>`<div class="shop-entry"><div class="sn">${s.name}</div><div class="sa">${s.addr}</div></div>`).join('')}</div></div>`;
+}
+
+// ── AFHENTNING ─────────────────────────────────────────────────────────
+function renderAfhentning(){
+  const zips=Object.keys(D.afhentning).sort();
+  return`<div class="sec-lbl">Vælg rute / postnummer</div><div class="card-grid">${zips.map(z=>{const s=D.afhentning[z];return card('📦',z,`${s.length} stop`,`nav('afh-zip','${z}','Rute ${z}')`,true,s.length);}).join('')}</div>`;
+}
+function renderAfhZip(zip){
+  const stops=(D.afhentning[zip]||[]).slice().sort((a,b)=>a.time.localeCompare(b.time));
+  return`<div class="sec-lbl">Rute ${zip} · ${stops.length} stop</div>${stops.map(s=>`
+<div class="cc" style="margin-bottom:8px"><div class="ch"><span class="ch-icon">🏢</span><div><div class="ch-title">${s.name}</div><div class="ch-sub">${s.addr}</div></div></div>
+<div class="cb2"><span class="route-time">${s.time}</span><span class="rtype ${s.type.toLowerCase()}">${s.type}</span></div></div>`).join('')}`;
+}
+
+// ── SATURDAY ──────────────────────────────────────────────────────────
+function renderSaturday(){
+  return`<div class="sec-lbl">Vælg tur</div><div class="card-grid">${D.saturday.map((t,i)=>card('📅',t.label,`${t.stops.length} stop`,`nav('sat-tur',${i},'${t.label}')`,true,t.stops.length)).join('')}</div>`;
+}
+function renderSatTur(i){
+  const tur=D.saturday[i];if(!tur)return'';
+  return`<div class="cc"><div class="ch"><span class="ch-icon">📅</span><div><div class="ch-title">${tur.label}</div><div class="ch-sub">${tur.stops.length} stop · lørdag</div></div></div>
+<div class="cb2">${tur.stops.map(s=>`<div class="shop-entry"><div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><div class="step-num">${s.num}</div><div class="sn" style="margin:0">${s.name}</div></div><div><span class="route-time">${s.time}</span><span class="port-tag">Port ${s.port}</span></div></div>`).join('')}</div></div>`;
+}
+
+// ── DELIVERY ──────────────────────────────────────────────────────────
+function renderDelivery(){
+  return`<div class="sec-lbl">Vognudbringning</div><div class="card-grid">
+${card('📩','Deposit','Jumpshare vejledningsvideo',`window.open('${getDeliveryUrl('deposit','https://jmp.sh/CZBTHO4b')}','_blank')`,false)}
+${card('📦','FM-Fuldmagt','Se vejledning',`window.open('${getDeliveryUrl('fm','https://jmp.sh/EYbCBCRZ')}','_blank')`,false)}
+${card('🧾','EFM','Se vejledning',`window.open('${getDeliveryUrl('efm','https://jmp.sh/X0xykZUS')}','_blank')`,false)}
+</div>
+<div class="sec-lbl" style="margin-top:14px">Alternativ levering</div><div class="card-grid">
+${card('📮','Med postkasse ✅','Postkasse / mailbox',`window.open('${getDeliveryUrl('mk','https://jumpshare.com/s/Q91h7n3QLLqI9Af2E3zB')}','_blank')`,false)}
+${card('🔒','Ingen postkasse ❌','No postkasse / mailbox',`window.open('${getDeliveryUrl('ik','https://jmp.sh/hBxajBMs')}','_blank')`,false)}
+</div>`;
+}
+
+// ── QUALITY ───────────────────────────────────────────────────────────
+function renderQuality(){
+  return`<div class="sec-lbl">Kvalitet</div>
+<p style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.5">Mandags og torsdags kvalitetstal for GLS pakkeshops.</p>
+<div class="card-grid">
+${card('📊','Mandags Kvalitet','Dropbox Excel',"window.open('https://www.dropbox.com/scl/fi/yozhryd3tducqhoip7psx/Mandag-Kvalitet.xlsx?rlkey=0c9yd56wgnxw89rhf5daapp6h&st=ud7lm8rm&dl=0','_blank')",false)}
+${card('📊','Torsdags Kvalitet','Link mangler — kontakt admin',"",false)}
+</div>`;
+}
+
+// ── LINKS ─────────────────────────────────────────────────────────────
+function renderLinks(){
+  return`<div class="sec-lbl">${LINKS.length} ressourcer</div>${LINKS.map(l=>`
+<a href="${l.url}" target="_blank" class="lc">
+<div class="lc-icon">${l.icon}</div>
+<div style="flex:1;min-width:0"><div class="ct">${l.name}</div><div class="cs">${l.desc}</div>${l.cred?`<div class="lc-cred">${l.cred}</div>`:''}</div>
+<span style="color:var(--muted);font-size:16px">↗</span></a>`).join('')}`;
+}
+
+// ── CUSTOM SECTIONS ───────────────────────────────────────────────────
+function renderCustomView(i){
+  const item=getCustom()[i];if(!item)return'';
+  return`<div class="cc"><div class="ch"><span class="ch-icon">${item.icon||'📝'}</span><div><div class="ch-title">${item.title}</div></div></div>
+<div class="cb2" style="white-space:pre-wrap;font-size:14px;line-height:1.6">${item.content||'(Intet indhold)'}</div></div>`;
+}
+function renderCustomList(i){
+  const item=getCustom()[i];if(!item||!item.items)return'';
+  return`<div class="sec-lbl">${item.items.length} punkter</div>${item.items.map(it=>`
+<div class="cc" style="margin-bottom:8px"><div class="ch"><span class="ch-icon">${it.icon||'🔹'}</span><div><div class="ch-title">${it.title}</div>${it.desc?`<div class="ch-sub">${it.desc}</div>`:''}</div></div>
+${it.url?`<div class="cb2"><a href="${it.url}" target="_blank" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent)">${it.url} ↗</a></div>`:''}
+</div>`).join('')}`;
+}
+
+// ── SEARCH ────────────────────────────────────────────────────────────
+function handleSearch(q){
+  const m=document.getElementById('main');
+  if(!q.trim()){render(curView,curData);return;}
+  const ql=q.toLowerCase();let html='';
+
+  const ps=[];
+  for(const[area,shops] of Object.entries(D.pakkeshop))
+    for(const s of shops)
+      if(s.name.toLowerCase().includes(ql)||area.toLowerCase().includes(ql))
+        ps.push({area,shop:s});
+  if(ps.length){
+    html+=`<div class="sr-sec">🏪 Pakkeshop (${ps.length})</div>`;
+    html+=ps.map(r=>`<div class="cc" style="margin-bottom:8px"><div class="ch" style="padding:10px 13px"><span class="ch-icon">🏪</span><div><div class="ch-title">${r.shop.name}</div><div class="ch-sub">${r.area}</div></div></div><div class="cb2"><div class="tags">${r.shop.hverdag?`<span class="tag tag-h">Hverdag: ${r.shop.hverdag}</span>`:''} ${r.shop.lørdag?`<span class="tag tag-l">Lørdag: ${r.shop.lørdag}</span>`:''} ${r.shop.afhentning?`<span class="tag tag-a">Afh: ${r.shop.afhentning}</span>`:''}</div></div></div>`).join('');
+  }
+
+  const af=[];
+  for(const[zip,stops] of Object.entries(D.afhentning))
+    for(const s of stops)
+      if(s.name.toLowerCase().includes(ql)||s.addr.toLowerCase().includes(ql)||zip.includes(ql))
+        af.push({zip,stop:s});
+  if(af.length){
+    html+=`<div class="sr-sec">📦 Afhentning (${af.length})</div>`;
+    html+=af.map(r=>`<div class="card" style="margin-bottom:6px"><div class="ci">📦</div><div class="cb"><div class="ct">${r.stop.name}</div><div class="cs">${r.stop.addr} · Rute ${r.zip}</div></div><div><span class="route-time">${r.stop.time}</span><span class="rtype ${r.stop.type.toLowerCase()}">${r.stop.type}</span></div></div>`).join('');
+  }
+
+  const col=[];
+  for(const ct of D.collection)
+    for(const s of ct.stops)
+      if(s.name.toLowerCase().includes(ql)||s.zip.includes(ql)||ct.time.includes(ql))
+        col.push({time:ct.time,stop:s});
+  if(col.length){
+    html+=`<div class="sr-sec">🕐 Collection (${col.length})</div>`;
+    html+=col.map(r=>`<div class="card" style="margin-bottom:6px"><div class="ci">🕐</div><div class="cb"><div class="ct">${r.stop.name.split(/DK-/)[0].trim()}</div><div class="cs">${r.stop.zip}</div></div><div class="badge">${r.time}</div></div>`).join('');
+  }
+
+  const lk=LINKS.filter(l=>l.name.toLowerCase().includes(ql)||l.desc.toLowerCase().includes(ql));
+  if(lk.length){
+    html+=`<div class="sr-sec">🔗 Links (${lk.length})</div>`;
+    html+=lk.map(l=>`<a href="${l.url}" target="_blank" class="lc" style="margin-bottom:6px"><div class="lc-icon">${l.icon}</div><div style="flex:1"><div class="ct">${l.name}</div><div class="cs">${l.desc}</div></div><span style="color:var(--muted)">↗</span></a>`).join('');
+  }
+
+  if(!html)html=`<div class="no-results">Ingen resultater for "<b>${q}</b>"</div>`;
+  m.innerHTML=html;
+}
+
+// ── SERVICE WORKER ────────────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/pilot-hjaelp-sw.js').catch(()=>{});
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+render('home',null,''); updateNav('');
+document.head.insertAdjacentHTML('beforeend','<style>.hidden{display:none!important}</style>');
+</script>
+</body>
+</html>
